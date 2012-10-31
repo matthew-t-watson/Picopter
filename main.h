@@ -10,6 +10,8 @@
 
 #include "I2CInterface.h"
 #include "MPU6050.h"
+#include <iostream>
+#include <stdlib.h>
 
 #endif	/* MAIN_H */
 

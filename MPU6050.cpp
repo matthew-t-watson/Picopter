@@ -7,15 +7,14 @@
 
 #include "MPU6050.h"
 
-    
-unsigned char buf_[32];
+MPU6050Class MPU6050Interface;
 
-MPU6050::MPU6050()
+MPU6050Class::MPU6050Class()
 {
 
 }
 
-bool MPU6050::getSensors(s_rawData* rawData)
+bool MPU6050Class::getSensors(s_rawData* rawData)
 {
     uint8_t buf[14];
     I2CInterface.readRegister(MPU6050_ADDRESS, MPU6050_RA_ACCEL_XOUT_H, buf, 14);
@@ -28,18 +27,22 @@ bool MPU6050::getSensors(s_rawData* rawData)
     rawData->r = static_cast<int16_t>((buf[12]<<8)|buf[13]);
 }
 
-bool MPU6050::checkConnection()
+bool MPU6050Class::checkConnection()
 {
-    std::cout << "Checking MPU6050 connection" << std::endl;
     I2CInterface.readRegister(MPU6050_ADDRESS, MPU6050_RA_WHO_AM_I, buf_, 1);
-    if(buf_[0] == MPU6050_ADDRESS)
+    if((unsigned char)buf_[0] == 0x68)
+    {
+        std::cout << "MPU6050 connection verified" << std::endl;
         return true;
+    }
     else
-        std::cout << "Expected 0x68, recieved " << std::hex << (unsigned int)buf_[0] << std::endl;
+    {
+        std::cout << "MPU6050 address read failed, expected 0x68, recieved " << std::hex << (unsigned int)buf_[0] << std::endl;
         return false;
+    }
 }
 
-void MPU6050::initialise_()
+void MPU6050Class::initialise_()
 {
     setPowerManagement1_(MPU6050_CLOCK_PLL_ZGYRO); //Clear sleep bit and set clock source
     setSampleRateDivider_(0);
@@ -47,27 +50,27 @@ void MPU6050::initialise_()
     setAccelConfig_(MPU6050_ACCEL_FS_16);
 }
 
-bool MPU6050::setSampleRateDivider_(unsigned char value)
+bool MPU6050Class::setSampleRateDivider_(unsigned char value)
 {
     return(I2CInterface.writeRegister(MPU6050_ADDRESS, MPU6050_RA_SMPLRT_DIV, &value, 1));
 }
 
-bool MPU6050::setDLPFConfig_(unsigned char cutoff)
+bool MPU6050Class::setDLPFConfig_(unsigned char cutoff)
 {
     return(I2CInterface.writeRegister(MPU6050_ADDRESS, MPU6050_RA_CONFIG, &cutoff, 1));
 }
 
-bool MPU6050::setGyroConfig_(unsigned char config)
+bool MPU6050Class::setGyroConfig_(unsigned char config)
 {
     return(I2CInterface.writeRegister(MPU6050_ADDRESS, MPU6050_RA_GYRO_CONFIG, &config, 1));
 }
 
-bool MPU6050::setAccelConfig_(unsigned char config)
+bool MPU6050Class::setAccelConfig_(unsigned char config)
 {
     return(I2CInterface.writeRegister(MPU6050_ADDRESS, MPU6050_RA_ACCEL_CONFIG, &config, 1));
 }
 
-bool MPU6050::setPowerManagement1_(unsigned char config)
+bool MPU6050Class::setPowerManagement1_(unsigned char config)
 {
     return(I2CInterface.writeRegister(MPU6050_ADDRESS, MPU6050_RA_PWR_MGMT_1, &config, 1));
 }

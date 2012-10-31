@@ -23,20 +23,22 @@ struct s_rawData
     int16_t r;
 };
 
-class MPU6050
+class MPU6050Class
 {
 public:
-    static bool getSensors(s_rawData* rawData);
-    static bool checkConnection();
-    MPU6050();
+    bool getSensors(s_rawData* rawData);
+    bool checkConnection();
+    MPU6050Class();
 private: 
-    static void initialise_();
-    static bool setSampleRateDivider_(unsigned char value);
-    static bool setDLPFConfig_(unsigned char cutoff);
-    static bool setGyroConfig_(unsigned char config);
-    static bool setAccelConfig_(unsigned char config);
-    static bool setPowerManagement1_(unsigned char config);
+    void initialise_();
+    bool setSampleRateDivider_(unsigned char value);
+    bool setDLPFConfig_(unsigned char cutoff);
+    bool setGyroConfig_(unsigned char config);
+    bool setAccelConfig_(unsigned char config);
+    bool setPowerManagement1_(unsigned char config);
+    unsigned char buf_[32];
 };
 
+extern MPU6050Class MPU6050Interface;
 #endif	/* MPU6050_H */
 
