@@ -14,10 +14,11 @@ using namespace std;
 /*
  *
  */
-int main(int argc, char** argv) {
-    unsigned char buf[] = {0x01};
-    I2CInterface::instance()->send(0x68, buf, 1);
-    //MPU6050::instance()->checkConnection();
+int main(int argc, char** argv)
+{
+    I2CInterface::openInterface();
+    MPU6050::instance()->checkConnection();
+    
     return 0;
 }
 

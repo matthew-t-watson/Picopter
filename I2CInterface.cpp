@@ -7,72 +7,53 @@
 
 #include "I2CInterface.h"
 
-I2CInterface* I2CInterface::p_instance_ = NULL; //Initialise pointer
-
-I2CInterface* I2CInterface::instance()
-{
-    if (!p_instance_) //Only one instance can exist at a time
-        p_instance_ = new I2CInterface;
-}
+//I2CInterface* I2CInterface::p_instance_ = NULL; //Initialise pointer
+//
+//I2CInterface* I2CInterface::instance()
+//{
+//    if (!p_instance_) //Only one instance can exist at a time
+//        p_instance_ = new I2CInterface;
+//}
+int file_;
+char filename_[20] = "/dev/i2c-1";
 
 I2CInterface::I2CInterface()
 {
-    initialise_();
+    std::cout << "Constructing I2CInterface" << std::endl;
+    //openInterface(); //Segfault
 }
 
 I2CInterface::~I2CInterface()
 {
+    std::cout << "Destructing I2CInterface" << std::endl;
     close(file_);
 }
 
-void I2CInterface::initialise_()
+void I2CInterface::openInterface()
 {
-    char filename[] = "/dev/i2c-1";
-    if ((file_ = open(filename, O_RDWR)) < 0)
+    if ((file_ = open(filename_, O_RDWR)) < 0)
     {
-        /* ERROR HANDLING: you can check errno to see what went wrong */
-        std::cout << "Failed to open the i2c bus" << std::endl;
+        std::cout << "Failed to open the i2c bus at path " << filename_ << std::endl;
     }
-    std::cout << "Opened /dev/i2c-1 at file descriptor " << file_ << std::endl;
 }
 
-bool I2CInterface::send(unsigned char address, unsigned char buf[], unsigned char len)
+bool I2CInterface::writeRegister(unsigned char address, unsigned char registerAddress, unsigned char buf[], unsigned char len)
 {
-    //initialise_();
     setSlaveAddress_(address);
-    if (write(file_, buf, len) != len)
-    {
-        std::cout << "Unable to send I2C data" << std::endl;
-        return false;
-    }
-    return true;
+    i2c_smbus_write_block_data(file_, registerAddress, len, buf);
 }
 
-bool I2CInterface::get(unsigned char slaveAddress, unsigned char registerAddress, unsigned char* buf, unsigned short len)
+bool I2CInterface::readRegister(unsigned char slaveAddress, unsigned char registerAddress, unsigned char* buf, unsigned char len)
 {
-    std::cout << "Getting from I2C, setting slave address" << std::endl;
     setSlaveAddress_(slaveAddress);
-    std::cout << "Slave address set, writing" << std::endl;
-    if (write(file_, &registerAddress, 1) != 1) //Fire out desired register address
-    {
-        std::cout << "Failed to send desired register address" << std::endl;
-        return false;
-    }
-    std::cout << "Desired register address sent" << std::endl;
-    if (read(file_, buf, len) != len) //Read in desired number of bytes. Register address will increment automagically
-    {
-        std::cout << "I2C bytes requested != bytes returned" << std::endl;
-        return false;
-    }
-    return true;
+    i2c_smbus_read_i2c_block_data(file_, registerAddress, len, buf);
 }
 
 void I2CInterface::setSlaveAddress_(unsigned char address)
 {
-    std::cout << "Setting slave address at file descriptor " << file_ << std::endl;
     if (ioctl(file_, I2C_SLAVE, address) < 0)
     {
-        std::cout << "Failed to set I2C slave address errno " << errno << std::endl;
+        std::cout << "Failed to set I2C slave address at file descriptor " << file_ << " errno " << errno << std::endl;
     }
 }
 

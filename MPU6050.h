@@ -12,18 +12,27 @@
 #include "I2CInterface.h"
 #include <iostream>
 
-
+struct s_rawData
+{
+    int16_t x;
+    int16_t y;
+    int16_t z;
+    int16_t temp;
+    int16_t p;
+    int16_t q;
+    int16_t r;
+};
 
 class MPU6050
 {
 public:
     static MPU6050* instance();
-    bool getSensors(unsigned char* buf);
+    bool getSensors(s_rawData* rawData);
     bool checkConnection();
+protected:
+    MPU6050();    
 private:
-    MPU6050();
-    static MPU6050* p_instance_;
-    
+    static MPU6050* p_instance_;    
     void initialise_();
     bool setSampleRateDivider_(unsigned char value);
     bool setDLPFConfig_(unsigned char cutoff);

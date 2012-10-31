@@ -20,19 +20,27 @@ MPU6050::MPU6050()
 
 }
 
-bool MPU6050::getSensors(unsigned char* buf)
+bool MPU6050::getSensors(s_rawData* rawData)
 {
-    return(I2CInterface::instance()->get(MPU6050_ADDRESS, MPU6050_RA_ACCEL_XOUT_H, buf, 14));
+    uint8_t buf[14];
+    I2CInterface::readRegister(MPU6050_ADDRESS, MPU6050_RA_ACCEL_XOUT_H, buf, 14);
+    rawData->x = static_cast<int16_t>((buf[0]<<8)|buf[1]);
+    rawData->y = static_cast<int16_t>((buf[2]<<8)|buf[3]);
+    rawData->z = static_cast<int16_t>((buf[4]<<8)|buf[5]);
+    rawData->temp = static_cast<int16_t>((buf[6]<<8)|buf[7]);
+    rawData->p = static_cast<int16_t>((buf[8]<<8)|buf[9]);
+    rawData->q = static_cast<int16_t>((buf[10]<<8)|buf[11]);
+    rawData->r = static_cast<int16_t>((buf[12]<<8)|buf[13]);
 }
 
 bool MPU6050::checkConnection()
 {
     std::cout << "Checking MPU6050 connection" << std::endl;
-    I2CInterface::instance()->get(MPU6050_ADDRESS, MPU6050_RA_WHO_AM_I, buf_, 1);
+    I2CInterface::readRegister(MPU6050_ADDRESS, MPU6050_RA_WHO_AM_I, buf_, 1);
     if(buf_[0] == MPU6050_ADDRESS)
         return true;
     else
-        std::cout << "Expected 0x68, recieved " << buf_[0] << std::endl;
+        std::cout << "Expected 0x68, recieved " << std::hex << (unsigned int)buf_[0] << std::endl;
         return false;
 }
 
@@ -46,35 +54,25 @@ void MPU6050::initialise_()
 
 bool MPU6050::setSampleRateDivider_(unsigned char value)
 {
-    buf_[0] = MPU6050_RA_SMPLRT_DIV;
-    buf_[1] = value;
-    return(I2CInterface::instance()->send(MPU6050_ADDRESS, buf_, 2));
+    return(I2CInterface::writeRegister(MPU6050_ADDRESS, MPU6050_RA_SMPLRT_DIV, &value, 1));
 }
 
 bool MPU6050::setDLPFConfig_(unsigned char cutoff)
 {
-    buf_[0] = MPU6050_RA_CONFIG;
-    buf_[1] = cutoff;
-    return(I2CInterface::instance()->send(MPU6050_ADDRESS, buf_, 2));
+    return(I2CInterface::writeRegister(MPU6050_ADDRESS, MPU6050_RA_CONFIG, &cutoff, 1));
 }
 
 bool MPU6050::setGyroConfig_(unsigned char config)
 {
-    buf_[0] = MPU6050_RA_GYRO_CONFIG;
-    buf_[1] = config;
-    return(I2CInterface::instance()->send(MPU6050_ADDRESS, buf_, 2));
+    return(I2CInterface::writeRegister(MPU6050_ADDRESS, MPU6050_RA_GYRO_CONFIG, &config, 1));
 }
 
 bool MPU6050::setAccelConfig_(unsigned char config)
 {
-    buf_[0] = MPU6050_RA_ACCEL_CONFIG;
-    buf_[1] = config;
-    return(I2CInterface::instance()->send(MPU6050_ADDRESS, buf_, 2));
+    return(I2CInterface::writeRegister(MPU6050_ADDRESS, MPU6050_RA_ACCEL_CONFIG, &config, 1));
 }
 
 bool MPU6050::setPowerManagement1_(unsigned char config)
 {
-    buf_[0] = MPU6050_RA_PWR_MGMT_1;
-    buf_[1] = config;
-    return(I2CInterface::instance()->send(MPU6050_ADDRESS, buf_, 2));
+    return(I2CInterface::writeRegister(MPU6050_ADDRESS, MPU6050_RA_PWR_MGMT_1, &config, 1));
 }

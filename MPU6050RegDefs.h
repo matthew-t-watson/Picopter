@@ -8,7 +8,7 @@
 #ifndef MPU6050REGISTERS_H
 #define	MPU6050REGISTERS_H
 
-const unsigned char MPU6050_ADDRESS = 0x68;
+const unsigned char MPU6050_ADDRESS = 0x69;
 
 //Register address map
 const unsigned char MPU6050_RA_XG_OFFS_TC = 0x00; //[7] PWR_MODE, [6:1] XG_OFFS_TC, [0] OTP_BNK_VLD

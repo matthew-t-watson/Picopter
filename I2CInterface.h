@@ -15,26 +15,26 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <linux/i2c-dev.h>
-#include <linux/i2c.h>
+//#include <linux/i2c.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <errno.h>
+#include <string.h>
 
 class I2CInterface
 {
 public:
-    static I2CInterface* instance();
-    bool send(unsigned char address, unsigned char buf[], unsigned char len);
-    bool get(unsigned char slaveAddress, unsigned char registerAddress, unsigned char* buf, unsigned short len);
-
-private:
     I2CInterface();
     virtual ~I2CInterface();
-    static I2CInterface* p_instance_;
-
-    void initialise_();
-    void setSlaveAddress_(unsigned char address);
-    int file_;
+    static bool writeRegister(unsigned char address, unsigned char registerAddress, unsigned char buf[], unsigned char len);
+    static bool readRegister(unsigned char slaveAddress, unsigned char registerAddress, unsigned char* buf, unsigned char len);
+    static void openInterface();
+    
+private:
+    //static int file_;
+    //static char filename_[20];
+    static void setSlaveAddress_(unsigned char address);
 };
 
 #endif	/* I2CINTERFACE_H */
