@@ -7,29 +7,20 @@
 
 #include "I2CInterface.h"
 
-//I2CInterface* I2CInterface::p_instance_ = NULL; //Initialise pointer
-//
-//I2CInterface* I2CInterface::instance()
-//{
-//    if (!p_instance_) //Only one instance can exist at a time
-//        p_instance_ = new I2CInterface;
-//}
-int file_;
-char filename_[20] = "/dev/i2c-1";
+I2CInterfaceClass I2CInterface;
 
-I2CInterface::I2CInterface()
+I2CInterfaceClass::I2CInterfaceClass()
 {
-    std::cout << "Constructing I2CInterface" << std::endl;
-    //openInterface(); //Segfault
+    strcpy(filename_, "/dev/i2c-1");
+    openInterface();
 }
 
-I2CInterface::~I2CInterface()
+I2CInterfaceClass::~I2CInterfaceClass()
 {
-    std::cout << "Destructing I2CInterface" << std::endl;
     close(file_);
 }
 
-void I2CInterface::openInterface()
+void I2CInterfaceClass::openInterface()
 {
     if ((file_ = open(filename_, O_RDWR)) < 0)
     {
@@ -37,19 +28,19 @@ void I2CInterface::openInterface()
     }
 }
 
-bool I2CInterface::writeRegister(unsigned char address, unsigned char registerAddress, unsigned char buf[], unsigned char len)
+bool I2CInterfaceClass::writeRegister(unsigned char address, unsigned char registerAddress, unsigned char buf[], unsigned char len)
 {
     setSlaveAddress_(address);
     i2c_smbus_write_block_data(file_, registerAddress, len, buf);
 }
 
-bool I2CInterface::readRegister(unsigned char slaveAddress, unsigned char registerAddress, unsigned char* buf, unsigned char len)
+bool I2CInterfaceClass::readRegister(unsigned char slaveAddress, unsigned char registerAddress, unsigned char* buf, unsigned char len)
 {
     setSlaveAddress_(slaveAddress);
     i2c_smbus_read_i2c_block_data(file_, registerAddress, len, buf);
 }
 
-void I2CInterface::setSlaveAddress_(unsigned char address)
+void I2CInterfaceClass::setSlaveAddress_(unsigned char address)
 {
     if (ioctl(file_, I2C_SLAVE, address) < 0)
     {

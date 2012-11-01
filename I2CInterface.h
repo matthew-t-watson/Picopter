@@ -22,20 +22,21 @@
 #include <errno.h>
 #include <string.h>
 
-class I2CInterface
+class I2CInterfaceClass
 {
 public:
-    I2CInterface();
-    virtual ~I2CInterface();
-    static bool writeRegister(unsigned char address, unsigned char registerAddress, unsigned char buf[], unsigned char len);
-    static bool readRegister(unsigned char slaveAddress, unsigned char registerAddress, unsigned char* buf, unsigned char len);
-    static void openInterface();
-    
+    I2CInterfaceClass();
+    virtual ~I2CInterfaceClass();
+    bool writeRegister(unsigned char address, unsigned char registerAddress, unsigned char buf[], unsigned char len);
+    bool readRegister(unsigned char slaveAddress, unsigned char registerAddress, unsigned char* buf, unsigned char len);
+    void openInterface();
+
 private:
-    //static int file_;
-    //static char filename_[20];
-    static void setSlaveAddress_(unsigned char address);
+    void setSlaveAddress_(unsigned char address);
+    int file_;
+    char filename_[20];
 };
+extern I2CInterfaceClass I2CInterface;
 
 #endif	/* I2CINTERFACE_H */
 

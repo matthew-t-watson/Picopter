@@ -44,19 +44,18 @@ const uint8_t REG_RX5L = 22;
 const uint8_t REG_RX6H = 23;
 const uint8_t REG_RX6L = 24;
 
-
-class PICInterface {
+class PICInterfaceClass
+{
 public:
-    static PICInterface* instance();
     void setPWM(uint16_t widths[]);
     void getRX(uint16_t widths[]);
-protected:
-    PICInterface();    
+    PICInterfaceClass();
+    virtual ~PICInterfaceClass();
 private:
-    virtual ~PICInterface();
-    static PICInterface* p_instance_;
 
 };
+
+extern PICInterfaceClass PICInterface;
 
 #endif	/* PICINTERFACE_H */
 

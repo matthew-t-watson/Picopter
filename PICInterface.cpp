@@ -7,25 +7,19 @@
 
 #include "PICInterface.h"
 
-PICInterface* PICInterface::p_instance_ = NULL; //Initialise pointer
+PICInterfaceClass PICInterface;
 
-PICInterface* PICInterface::instance()
-{
-    if (!p_instance_) //Only one instance can exist at a time
-        p_instance_ = new PICInterface;
-}
-
-PICInterface::PICInterface()
+PICInterfaceClass::PICInterfaceClass()
 {
 
 }
 
-PICInterface::~PICInterface()
+PICInterfaceClass::~PICInterfaceClass()
 {
 
 }
 
-void PICInterface::setPWM(uint16_t widths[])
+void PICInterfaceClass::setPWM(uint16_t widths[])
 {
     uint8_t widthsChar[sizeof(widths)*2];
     for (int x = 0; x < sizeof(widths); x++)
@@ -36,7 +30,7 @@ void PICInterface::setPWM(uint16_t widths[])
     I2CInterface.writeRegister(PIC_ADDRESS, REG_PWM1H, widthsChar, sizeof(widthsChar));
 }
 
-void PICInterface::getRX(uint16_t widths[])
+void PICInterfaceClass::getRX(uint16_t widths[])
 {
     uint8_t widthsChar[NUMBER_RX_CHANNELS * 2];
     I2CInterface.readRegister(PIC_ADDRESS, REG_RX1H, widthsChar, NUMBER_RX_CHANNELS * 2);

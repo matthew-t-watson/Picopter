@@ -11,7 +11,9 @@
 #include "I2CInterface.h"
 #include "MPU6050.h"
 #include <iostream>
+#include <pthread.h>
 #include <stdlib.h>
-
+#include <stdio.h>
+#include <string.h>
 #endif	/* MAIN_H */
 

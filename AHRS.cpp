@@ -31,7 +31,7 @@ AHRS::~AHRS()
 
 void AHRS::getSensors(s_rawData* rawData)
 {
-    MPU6050::instance()->getSensors(rawData);
+    MPU6050Interface.getSensors(rawData);
 }
 
 void AHRS::calibrateData(s_rawData* rawData, s_calibratedData* calibratedData) //Need to add scales and zero points + any required inversions

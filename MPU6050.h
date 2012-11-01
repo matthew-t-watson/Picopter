@@ -29,6 +29,7 @@ public:
     bool getSensors(s_rawData* rawData);
     bool checkConnection();
     MPU6050Class();
+    virtual ~MPU6050Class();
 private: 
     void initialise_();
     bool setSampleRateDivider_(unsigned char value);

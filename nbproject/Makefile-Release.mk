@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/AHRS.o \
+	${OBJECTDIR}/CommandLineInterface.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/I2CInterface.o \
 	${OBJECTDIR}/PICInterface.o \
@@ -45,8 +46,8 @@ OBJECTFILES= \
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=
-CXXFLAGS=
+CCFLAGS=-lpthread
+CXXFLAGS=-lpthread
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -69,6 +70,11 @@ ${OBJECTDIR}/AHRS.o: nbproject/Makefile-${CND_CONF}.mk AHRS.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/AHRS.o AHRS.cpp
+
+${OBJECTDIR}/CommandLineInterface.o: nbproject/Makefile-${CND_CONF}.mk CommandLineInterface.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/CommandLineInterface.o CommandLineInterface.cpp
 
 ${OBJECTDIR}/main.o: nbproject/Makefile-${CND_CONF}.mk main.cpp 
 	${MKDIR} -p ${OBJECTDIR}

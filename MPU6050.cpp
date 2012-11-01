@@ -14,6 +14,11 @@ MPU6050Class::MPU6050Class()
 
 }
 
+MPU6050Class::~MPU6050Class()
+{
+
+}
+
 bool MPU6050Class::getSensors(s_rawData* rawData)
 {
     uint8_t buf[14];
