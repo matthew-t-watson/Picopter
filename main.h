@@ -10,6 +10,10 @@
 
 #include "I2CInterface.h"
 #include "MPU6050.h"
+#include "Logger.h"
+#include "AHRS.h"
+
+
 #include <iostream>
 #include <pthread.h>
 #include <stdlib.h>

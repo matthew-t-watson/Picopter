@@ -11,7 +11,7 @@ MPU6050Class MPU6050Interface;
 
 MPU6050Class::MPU6050Class()
 {
-
+    initialise_();
 }
 
 MPU6050Class::~MPU6050Class()

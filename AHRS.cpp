@@ -29,6 +29,7 @@ AHRS::~AHRS()
 {
 }
 
+//Collect data from all the sensors. Currently only MPU is collected.
 void AHRS::getSensors(s_rawData* rawData)
 {
     MPU6050Interface.getSensors(rawData);

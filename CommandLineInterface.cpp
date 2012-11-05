@@ -26,15 +26,28 @@ void CLI_class::open()
 {
     for (std::string line; std::cout << "Picopter > " && std::getline(std::cin, line);)
     {
-        switch (lineMap_[line])
+        std::stringstream stream(line);
+        int i = 0;
+        while (std::getline(stream, stringbuf_[i], ' '))
+        {
+            i++;
+        }
+        
+        switch (lineMap_[stringbuf_[0]])
         {
             case en_stringNotDefined:
+                std::cout << "Invalid command" << std::endl;
                 break;
-            case en_stringvalue1:
-                std::cout << "First string input" << std::endl;
+            case en_openlog:
+                std::cout << "Opening log at " << stringbuf_[1] << std::endl;
+                LogMan.open(stringbuf_[1].c_str());
                 break;
-            case en_stringvalue2:
-                std::cout << "Second string input" << std::endl;
+            case en_writelog:
+                std::cout << "Writing " << stringbuf_[1] << " to log" << std::endl;
+                Log << stringbuf_[1];
+                break;
+            case en_starttimer:
+                Timer.start();
                 break;
             case en_exit:
                 exit(1);
@@ -47,11 +60,11 @@ void CLI_class::open()
     }
 }
 
-
 void CLI_class::initialiseMap_()
 {
     lineMap_[""] = en_stringNotDefined;
-    lineMap_["First input"] = en_stringvalue1;
-    lineMap_["Second input"] = en_stringvalue2;
+    lineMap_["openlog"] = en_openlog;
+    lineMap_["writelog"] = en_writelog;
+    lineMap_["starttimer"] = en_starttimer;
     lineMap_["exit"] = en_exit;
 }

@@ -15,13 +15,18 @@
 #include <string>
 #include <stdio.h>
 #include <sys/types.h>
+#include <sstream>
+
+#include "Logger.h"
+#include "Timer.h"
 
 
 enum lineString
 {
     en_stringNotDefined,
-    en_stringvalue1,
-    en_stringvalue2,
+    en_openlog,
+    en_writelog,
+    en_starttimer,
     en_exit
 };
 
@@ -35,6 +40,7 @@ public:
 private:
     std::map<std::string, lineString> lineMap_;
     void initialiseMap_();
+    std::string stringbuf_[6];
 };
 extern CLI_class CLI;
 

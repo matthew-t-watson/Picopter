@@ -9,6 +9,7 @@
 
 #include "main.h"
 #include "CommandLineInterface.h"
+#include "Timer.h"
 
 using namespace std;
 
@@ -19,22 +20,23 @@ using namespace std;
 template <class T, void(T::*member_function)()>
 void* thunk(void* p)
 {
-    (static_cast<T*>(p)->*member_function)();
+    (static_cast<T*> (p)->*member_function)();
     return 0;
 }
 
 int main(int argc, char** argv)
 {
     if (!MPU6050Interface.checkConnection()) exit(1);
-    
-    pthread_t CLIthread;    
+
+    //Create CLI thread + open
+    pthread_t CLIthread;
     pthread_create(&CLIthread, NULL, thunk<CLI_class, &CLI_class::open>, &CLI);
+
     
-    while(1)
+
+    while (1)
     {
-        
     }
-    
     return 0;
 }
 
