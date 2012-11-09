@@ -37,7 +37,7 @@ bool I2CInterfaceClass::writeRegister(unsigned char slaveAddress, unsigned char 
     setSlaveAddress_(slaveAddress);
     if (i2c_smbus_write_i2c_block_data(file_, registerAddress, len, buf) < 0)
     {
-        std::cout << "I2C write failed" << std::endl;
+        std::cout << "I2C write failed writing to " << std::hex << slaveAddress << std::endl;
     }
     pthread_mutex_unlock (&I2Cmutex_);
 }

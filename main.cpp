@@ -23,12 +23,13 @@ int main(int argc, char** argv)
 {
     MPU6050Interface.initialise();
     //Create CLI thread + open
-    pthread_t CLIthread;
-    pthread_create(&CLIthread, NULL, thunk<CLI_class, &CLI_class::open>, &CLI);
-    //Timer.start();
+//    pthread_t CLIthread;
+//    pthread_create(&CLIthread, NULL, thunk<CLI_class, &CLI_class::open>, &CLI);
+    Timer.start();
+    CLI.open();
     while (1)
     {
-        sleep(1);
+        sleep(1000);
     }
 }
 

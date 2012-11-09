@@ -9,6 +9,7 @@
 #include "PICInterface.h"
 
 TimerClass Timer;
+pthread_mutex_t TimerMutex_;
 
 TimerClass::TimerClass()
 {
@@ -16,16 +17,16 @@ TimerClass::TimerClass()
     signalAction.sa_handler = &sig_handler_;
 
     /* Initialize timer expiration value */
-    timeValue.tv_sec = 0;
-    timeValue.tv_nsec = 2500000;
+    timeValue_.tv_sec = 0;
+    timeValue_.tv_nsec = 2500000;
 
     /* Initialize timer period */
-    timeInterval.tv_sec = 0;
-    timeInterval.tv_nsec = 0;
+    timeInterval_.tv_sec = 0;
+    timeInterval_.tv_nsec = 0;
 
     /* Set the time to be set value */
-    timeToSet.it_value = timeValue;
-    timeToSet.it_interval = timeInterval;
+    timeToSet_.it_value = timeValue_;
+    timeToSet_.it_interval = timeInterval_;
 
     /* Connect a signal handler routine to the SIGALRM signal */
     sigaction(SIGALRM, &signalAction, NULL);
@@ -40,17 +41,21 @@ TimerClass::TimerClass(const TimerClass& orig)
 
 TimerClass::~TimerClass()
 {
+    started = false;
 }
 
 void TimerClass::start()
 {
-    timer_settime(timerId, 0, &timeToSet, NULL);
+    timer_settime(timerId, 0, &timeToSet_, NULL);
+    started == true;
 }
 
 void TimerClass::sig_handler_(int signum)
 {
-    //uint16_t widths[] = {100,200,400,800,1600,3200};
-    //PICInterface.setPWM(widths);
+    pthread_mutex_lock(&TimerMutex_);
+    uint16_t widths[] = {10000, 10000, 10000, 10000, 10000, 10000};
+    PICInterface.setPWM(widths);
+    PICInterface.getRX();
 
     static timespec oldtime;
     static timespec time;
@@ -62,7 +67,7 @@ void TimerClass::sig_handler_(int signum)
     AHRS.update();
     Log.precision(3);
     Log.setf(std::fstream::fixed, std::fstream::floatfield);
-    Log << Timer.dt * 1000 << ", "
+    Log	    << Timer.dt * 1000 << ", "
 	    << AHRS.calibratedData.x << ", "
 	    << AHRS.calibratedData.y << ", "
 	    << AHRS.calibratedData.z << ", "
@@ -75,19 +80,16 @@ void TimerClass::sig_handler_(int signum)
 	    << AHRS.orientation.phi << ", "
 	    << AHRS.orientation.psi << ", "
 	    << AHRS.orientation.theta << std::endl;
-    //Log.flush();
+    Log.flush();
 
-    
-    
-//	    Log << AHRS.rawData_.p << ", "
-//	    << AHRS.rawData_.q << ", "
-//	    << AHRS.rawData_.r << ", " <<std::endl;
-    
-    //std::cout << signum << " " << Timer.dt << " " << timer_getoverrun(&Timer.timerId) << std::endl;
-
-    //    clock_gettime(CLOCK_MONOTONIC, &iterationtime);
-    //    Timer.timeValue.tv_nsec = 2500000 - ((iterationtime.tv_sec*1000000000 + iterationtime.tv_nsec) - (time.tv_sec*1000000000 + time.tv_nsec));
-    //    Timer.timeToSet.it_value = Timer.timeValue;
-    //std::cout << AHRS.orientation.phi << ", " << AHRS.orientation.psi << ", " << AHRS.orientation.theta << std::endl;
+    //Timer aims to get as close to 400Hz as possible, mostly limited by the I2C bandwidth
+    clock_gettime(CLOCK_MONOTONIC, &iterationtime);
+    int inttime = 2500000 - ((iterationtime.tv_sec * 1000000000 + iterationtime.tv_nsec) - (time.tv_sec * 1000000000 + time.tv_nsec));
+    if (inttime < 0)
+	Timer.timeValue_.tv_nsec = 1;
+    else
+	Timer.timeValue_.tv_nsec = inttime;
+    Timer.timeToSet_.it_value = Timer.timeValue_;
     Timer.start();
+    pthread_mutex_unlock(&TimerMutex_);
 }

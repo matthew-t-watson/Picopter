@@ -31,13 +31,13 @@ public:
     void start();
     float dt;
     timer_t timerId; /* id  for the posix timer */
-    struct itimerspec timeToSet; /* time to be set */
-    struct timespec timeValue; /* timer expiration value */
-    struct timespec timeInterval; /* timer period */
     struct sigaction signalAction; /* signal action handler struct */
-
+    bool started;
 private:
     static void sig_handler_(int signum);
+    struct itimerspec timeToSet_; /* time to be set */
+    struct timespec timeValue_; /* timer expiration value */
+    struct timespec timeInterval_; /* timer period */
 
 };
 

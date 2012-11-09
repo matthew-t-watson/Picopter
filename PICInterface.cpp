@@ -35,7 +35,8 @@ void PICInterfaceClass::setPWM(uint16_t widths[])
 void PICInterfaceClass::getRX()
 {
     uint8_t widthsChar[12] = {0};
-
+    
+    //Appears to generate read errors above ~5 bytes, returning only 1's
     //	I2CInterface.readRegister(PIC_ADDRESS, REG_RX1H, widthsChar, sizeof(widthsChar));
     I2CInterface.readRegister(PIC_ADDRESS, REG_RX1H, &widthsChar[0], 2);
     I2CInterface.readRegister(PIC_ADDRESS, REG_RX2H, &widthsChar[2], 2);
