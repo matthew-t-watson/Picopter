@@ -10,37 +10,53 @@
 
 #include <iostream>
 #include <stdint.h>
+#include <math.h>
 
+#include "Timer.h"
 #include "MPU6050.h"
+#include "ConfigFile.h"
 
-
-extern s_rawData rawData;
+#define pi 3.14159265358979
 
 struct s_calibratedData
 {
-    float x;
-    float y;
-    float z;
-    float temp;
-    float p;
-    float q;
-    float r;
+    double x;
+    double y;
+    double z;
+    double temp;
+    double p;
+    double q;
+    double r;
 };
-extern s_calibratedData calibratedData;
 
-class AHRS
+struct s_euler
+{
+    double phi;
+    double psi;
+    double theta;
+};
+
+class AHRSClass
 {
 public:
-    static AHRS* Instance();
-    AHRS(const AHRS& orig);
-    virtual ~AHRS();
-    void getSensors(s_rawData* rawData);
-    void calibrateData(s_rawData* rawData, s_calibratedData* calibratedData);
-protected:
-    AHRS();
+    AHRSClass();
+    AHRSClass(const AHRSClass& orig);
+    virtual ~AHRSClass();
+    void update();
+    void readConfig();
+    s_calibratedData calibratedData;
+    s_rawData rawData_;
+    s_euler orientation;
+    s_euler accelAngles;
 private:
-    static AHRS* p_instance_;
+    void getSensors_();
+    void calibrateData_();
+    void filter_();
+    void calcAccelAngles_();
+    s_rawData zeroPoints_;
 };
+
+extern AHRSClass AHRS;
 
 #endif	/* AHRS_H */
 

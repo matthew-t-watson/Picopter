@@ -11,7 +11,7 @@ MPU6050Class MPU6050Interface;
 
 MPU6050Class::MPU6050Class()
 {
-    initialise_();
+    initialise();
 }
 
 MPU6050Class::~MPU6050Class()
@@ -47,35 +47,40 @@ bool MPU6050Class::checkConnection()
     }
 }
 
-void MPU6050Class::initialise_()
+void MPU6050Class::initialise()
 {
-    setPowerManagement1_(MPU6050_CLOCK_PLL_ZGYRO); //Clear sleep bit and set clock source
+    setPowerManagement1_(MPU6050_CLOCK_PLL_XGYRO); //Clear sleep bit and set clock source
     setSampleRateDivider_(0);
     setGyroConfig_(MPU6050_GYRO_FS_2000);
     setAccelConfig_(MPU6050_ACCEL_FS_16);
 }
 
-bool MPU6050Class::setSampleRateDivider_(unsigned char value)
+int MPU6050Class::setSampleRateDivider_(unsigned char value)
 {
     return(I2CInterface.writeRegister(MPU6050_ADDRESS, MPU6050_RA_SMPLRT_DIV, &value, 1));
 }
 
-bool MPU6050Class::setDLPFConfig_(unsigned char cutoff)
+int MPU6050Class::setDLPFConfig_(unsigned char cutoff)
 {
     return(I2CInterface.writeRegister(MPU6050_ADDRESS, MPU6050_RA_CONFIG, &cutoff, 1));
 }
 
-bool MPU6050Class::setGyroConfig_(unsigned char config)
+int MPU6050Class::setGyroConfig_(unsigned char config)
 {
     return(I2CInterface.writeRegister(MPU6050_ADDRESS, MPU6050_RA_GYRO_CONFIG, &config, 1));
 }
 
-bool MPU6050Class::setAccelConfig_(unsigned char config)
+int MPU6050Class::setAccelConfig_(unsigned char config)
 {
     return(I2CInterface.writeRegister(MPU6050_ADDRESS, MPU6050_RA_ACCEL_CONFIG, &config, 1));
 }
 
-bool MPU6050Class::setPowerManagement1_(unsigned char config)
+int MPU6050Class::setPowerManagement1_(unsigned char config)
 {
     return(I2CInterface.writeRegister(MPU6050_ADDRESS, MPU6050_RA_PWR_MGMT_1, &config, 1));
+}
+
+int MPU6050Class::setPowerManagement2_(unsigned char config)
+{
+    return(I2CInterface.writeRegister(MPU6050_ADDRESS, MPU6050_RA_PWR_MGMT_2, &config, 1));
 }

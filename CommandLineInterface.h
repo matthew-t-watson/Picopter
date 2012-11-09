@@ -19,6 +19,7 @@
 
 #include "Logger.h"
 #include "Timer.h"
+#include "ConfigFile.h"
 
 
 enum lineString
@@ -27,6 +28,12 @@ enum lineString
     en_openlog,
     en_writelog,
     en_starttimer,
+    en_readconfig,
+    en_dumpsensors,
+    en_dumprawsensors,
+    en_dumprx,
+    en_resetmpu,
+    en_readregister,
     en_exit
 };
 

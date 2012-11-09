@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <fstream>
 
 #include "MPU6050.h"
 #include "AHRS.h"
@@ -28,6 +29,13 @@ public:
     virtual ~TimerClass();
     
     void start();
+    float dt;
+    timer_t timerId; /* id  for the posix timer */
+    struct itimerspec timeToSet; /* time to be set */
+    struct timespec timeValue; /* timer expiration value */
+    struct timespec timeInterval; /* timer period */
+    struct sigaction signalAction; /* signal action handler struct */
+
 private:
     static void sig_handler_(int signum);
 

@@ -22,22 +22,35 @@ I2CInterfaceClass::~I2CInterfaceClass()
 
 void I2CInterfaceClass::openInterface()
 {
+    pthread_mutex_lock (&I2Cmutex_);
     if ((file_ = open(filename_, O_RDWR)) < 0)
     {
         std::cout << "Failed to open the i2c bus at path " << filename_ << std::endl;
     }
+    pthread_mutex_unlock (&I2Cmutex_);
 }
 
-bool I2CInterfaceClass::writeRegister(unsigned char address, unsigned char registerAddress, unsigned char buf[], unsigned char len)
+
+bool I2CInterfaceClass::writeRegister(unsigned char slaveAddress, unsigned char registerAddress, unsigned char* buf, unsigned char len)
 {
-    setSlaveAddress_(address);
-    i2c_smbus_write_block_data(file_, registerAddress, len, buf);
+    pthread_mutex_lock (&I2Cmutex_);
+    setSlaveAddress_(slaveAddress);
+    if (i2c_smbus_write_i2c_block_data(file_, registerAddress, len, buf) < 0)
+    {
+        std::cout << "I2C write failed" << std::endl;
+    }
+    pthread_mutex_unlock (&I2Cmutex_);
 }
 
 bool I2CInterfaceClass::readRegister(unsigned char slaveAddress, unsigned char registerAddress, unsigned char* buf, unsigned char len)
 {
+    pthread_mutex_lock (&I2Cmutex_);
     setSlaveAddress_(slaveAddress);
-    i2c_smbus_read_i2c_block_data(file_, registerAddress, len, buf);
+    if (i2c_smbus_read_i2c_block_data(file_, registerAddress, len, buf) != len)
+    {
+        std::cout << "Incorrect number of bytes read" << std::endl;
+    }
+    pthread_mutex_unlock (&I2Cmutex_);
 }
 
 void I2CInterfaceClass::setSlaveAddress_(unsigned char address)

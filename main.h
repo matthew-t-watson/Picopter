@@ -12,6 +12,9 @@
 #include "MPU6050.h"
 #include "Logger.h"
 #include "AHRS.h"
+#include "CommandLineInterface.h"
+#include "Timer.h"
+#include "ConfigFile.h"
 
 
 #include <iostream>
@@ -20,4 +23,5 @@
 #include <stdio.h>
 #include <string.h>
 #endif	/* MAIN_H */
+
 

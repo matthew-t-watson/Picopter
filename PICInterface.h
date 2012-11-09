@@ -14,44 +14,57 @@
 #include "I2CInterface.h"
 
 const uint8_t PIC_ADDRESS = 0x50;
-const uint8_t NUMBER_PWM_CHANNELS = 6;
-const uint8_t NUMBER_RX_CHANNELS = 6;
 
 //Simulated register names and addresses
-const uint8_t REG_PWM1H = 0;
-const uint8_t REG_PWM1L = 1;
-const uint8_t REG_PWM2H = 2;
-const uint8_t REG_PWM2L = 3;
-const uint8_t REG_PWM3H = 4;
-const uint8_t REG_PWM3L = 5;
-const uint8_t REG_PWM4H = 6;
-const uint8_t REG_PWM4L = 7;
-const uint8_t REG_PWM5H = 8;
-const uint8_t REG_PWM5L = 9;
-const uint8_t REG_PWM6H = 10;
-const uint8_t REG_PWM6L = 11;
-const uint8_t REG_PWMFIRE = 12;
-const uint8_t REG_RX1H = 13;
-const uint8_t REG_RX1L = 14;
-const uint8_t REG_RX2H = 15;
-const uint8_t REG_RX2L = 16;
-const uint8_t REG_RX3H = 17;
-const uint8_t REG_RX3L = 18;
-const uint8_t REG_RX4H = 19;
-const uint8_t REG_RX4L = 20;
-const uint8_t REG_RX5H = 21;
-const uint8_t REG_RX5L = 22;
-const uint8_t REG_RX6H = 23;
-const uint8_t REG_RX6L = 24;
+const uint8_t REG_PWM1H = 0x00;
+const uint8_t REG_PWM1L = 0x01;
+const uint8_t REG_PWM2H = 0x02;
+const uint8_t REG_PWM2L = 0x03;
+const uint8_t REG_PWM3H = 0x04;
+const uint8_t REG_PWM3L = 0x05;
+const uint8_t REG_PWM4H = 0x06;
+const uint8_t REG_PWM4L = 0x07;
+const uint8_t REG_PWM5H = 0x08;
+const uint8_t REG_PWM5L = 0x09;
+const uint8_t REG_PWM6H = 0x0a;
+const uint8_t REG_PWM6L = 0x0b;
+const uint8_t REG_PWMFIRE = 0x0c;
+const uint8_t REG_RX1H = 0x0d;
+const uint8_t REG_RX1L = 0x0e;
+const uint8_t REG_RX2H = 0x0f;
+const uint8_t REG_RX2L = 0x10;
+const uint8_t REG_RX3H = 0x11;
+const uint8_t REG_RX3L = 0x12;
+const uint8_t REG_RX4H = 0x13;
+const uint8_t REG_RX4L = 0x14;
+const uint8_t REG_RX5H = 0x15;
+const uint8_t REG_RX5L = 0x16;
+const uint8_t REG_RX6H = 0x17;
+const uint8_t REG_RX6L = 0x18;
+
+struct s_rxWidths
+{
+    uint16_t roll;
+    uint16_t pitch;
+    uint16_t throttle;
+    uint16_t yaw;
+    uint16_t sw1;
+    uint16_t sw2;
+};
 
 class PICInterfaceClass
 {
 public:
-    void setPWM(uint16_t widths[]);
-    void getRX(uint16_t widths[]);
     PICInterfaceClass();
     virtual ~PICInterfaceClass();
-private:
+    
+    void setPWM(uint16_t widths[]);
+    void getRX();
+    
+    s_rxWidths rxWidths;
+    
+private:    
+    uint16_t make16_(uint8_t H, uint8_t L);
 
 };
 

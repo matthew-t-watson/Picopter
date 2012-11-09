@@ -27,7 +27,7 @@ class I2CInterfaceClass
 public:
     I2CInterfaceClass();
     virtual ~I2CInterfaceClass();
-    bool writeRegister(unsigned char address, unsigned char registerAddress, unsigned char buf[], unsigned char len);
+    bool writeRegister(unsigned char slaveAddress, unsigned char registerAddress, unsigned char* buf, unsigned char len);
     bool readRegister(unsigned char slaveAddress, unsigned char registerAddress, unsigned char* buf, unsigned char len);
     void openInterface();
 
@@ -35,6 +35,7 @@ private:
     void setSlaveAddress_(unsigned char address);
     int file_;
     char filename_[20];
+    pthread_mutex_t I2Cmutex_;
 };
 extern I2CInterfaceClass I2CInterface;
 

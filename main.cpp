@@ -5,14 +5,8 @@
  * Created on 21 October 2012, 22:26
  */
 
-#include <iostream>
 
 #include "main.h"
-#include "CommandLineInterface.h"
-#include "Timer.h"
-
-using namespace std;
-
 /*
  *
  */
@@ -24,20 +18,18 @@ void* thunk(void* p)
     return 0;
 }
 
+
 int main(int argc, char** argv)
 {
-    if (!MPU6050Interface.checkConnection()) exit(1);
-
+    MPU6050Interface.initialise();
     //Create CLI thread + open
     pthread_t CLIthread;
     pthread_create(&CLIthread, NULL, thunk<CLI_class, &CLI_class::open>, &CLI);
-
-    
-
+    //Timer.start();
     while (1)
     {
+        sleep(1);
     }
-    return 0;
 }
 
 
