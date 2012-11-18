@@ -29,6 +29,8 @@ public:
     virtual ~TimerClass();
     
     void start();
+    void stop();
+    
     float dt;
     timer_t timerId; /* id  for the posix timer */
     struct sigaction signalAction; /* signal action handler struct */
@@ -38,6 +40,12 @@ private:
     struct itimerspec timeToSet_; /* time to be set */
     struct timespec timeValue_; /* timer expiration value */
     struct timespec timeInterval_; /* timer period */
+    timespec oldtime_;
+    timespec time_;
+    timespec iterationtime_;
+    
+    void calcdt_();
+    void compensate_();
 
 };
 

@@ -36,10 +36,11 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/AHRS.o \
 	${OBJECTDIR}/CommandLineInterface.o \
+	${OBJECTDIR}/HMC5883L.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/I2CInterface.o \
-	${OBJECTDIR}/Control.o \
 	${OBJECTDIR}/PICInterface.o \
+	${OBJECTDIR}/Control.o \
 	${OBJECTDIR}/MPU6050.o \
 	${OBJECTDIR}/ConfigFile.o \
 	${OBJECTDIR}/Logger.o \
@@ -80,6 +81,11 @@ ${OBJECTDIR}/CommandLineInterface.o: nbproject/Makefile-${CND_CONF}.mk CommandLi
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/CommandLineInterface.o CommandLineInterface.cpp
 
+${OBJECTDIR}/HMC5883L.o: nbproject/Makefile-${CND_CONF}.mk HMC5883L.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/HMC5883L.o HMC5883L.cpp
+
 ${OBJECTDIR}/main.o: nbproject/Makefile-${CND_CONF}.mk main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
@@ -90,15 +96,15 @@ ${OBJECTDIR}/I2CInterface.o: nbproject/Makefile-${CND_CONF}.mk I2CInterface.cpp
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/I2CInterface.o I2CInterface.cpp
 
-${OBJECTDIR}/Control.o: nbproject/Makefile-${CND_CONF}.mk Control.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/Control.o Control.cpp
-
 ${OBJECTDIR}/PICInterface.o: nbproject/Makefile-${CND_CONF}.mk PICInterface.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/PICInterface.o PICInterface.cpp
+
+${OBJECTDIR}/Control.o: nbproject/Makefile-${CND_CONF}.mk Control.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/Control.o Control.cpp
 
 ${OBJECTDIR}/MPU6050.o: nbproject/Makefile-${CND_CONF}.mk MPU6050.cpp 
 	${MKDIR} -p ${OBJECTDIR}

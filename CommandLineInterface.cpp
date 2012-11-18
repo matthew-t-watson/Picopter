@@ -75,22 +75,39 @@ void CLI_class::open()
 		break;
 
 	    case en_dumpsensors:
-		if(!Timer.started) AHRS.update();
+		if(!Timer.started)
+		{
+		    AHRS.update();
+		}
 		std::cout << AHRS.calibratedData.x << "\t" << AHRS.calibratedData.y << "\t" << AHRS.calibratedData.z << "\t" << AHRS.calibratedData.p << "\t" << AHRS.calibratedData.q << "\t" << AHRS.calibratedData.r << "\t" << AHRS.calibratedData.temp << std::endl;
 		break;
 
 	    case en_dumprawsensors:
-		if(!Timer.started) AHRS.update();
+		if(!Timer.started)
+		{
+		    AHRS.update();
+		}
 		std::cout << AHRS.rawData_.x << "\t" << AHRS.rawData_.y << "\t" << AHRS.rawData_.z << "\t" << AHRS.rawData_.p << "\t" << AHRS.rawData_.q << "\t" << AHRS.rawData_.r << std::endl;
+		break;
+		
+	    case en_dumprawmag:
+		if (!Timer.started)
+		{
+		    AHRS.update();
+		}
+		std::cout << AHRS.rawData_.mag_x << ", " << AHRS.rawData_.mag_y << ", " << AHRS.rawData_.mag_z << std::endl;
 		break;
 
 	    case en_dumprx:
-		if(!Timer.started) PICInterface.getRX();
+		if(!Timer.started)
+		{
+		    PICInterface.getRX();
+		}
 		std::cout << PICInterface.rxWidths.pitch << ", " << PICInterface.rxWidths.roll << ", " << PICInterface.rxWidths.throttle << ", " << PICInterface.rxWidths.yaw << ", " << PICInterface.rxWidths.sw1 << ", " << PICInterface.rxWidths.sw2 << ", " << std::endl;
 		break;
 
 	    case en_resetmpu:
-		MPU6050Interface.initialise();
+		MPU6050.initialise();
 		std::cout << "mpu reset" << std::endl;
 		break;
 
@@ -99,7 +116,27 @@ void CLI_class::open()
 		I2CInterface.readRegister(static_cast<unsigned char> (atoi(stringbuf_[1].c_str())), static_cast<unsigned char> (atoi(stringbuf_[2].c_str())), buf, static_cast<unsigned char> (atoi(stringbuf_[3].c_str())));
 		std::cout << buf << std::endl;
 		break;
+		
+	    case en_setpid:
+		Control.setPID(atoi(stringbuf_[1].c_str()), atoi(stringbuf_[2].c_str()), atoi(stringbuf_[3].c_str()));
+		break;
+		
+	    case en_getpid:
+		Control.getPID();
+		break;
 
+		case en_setYawPID:
+		Control.setYawPID(atoi(stringbuf_[1].c_str()), atoi(stringbuf_[2].c_str()), atoi(stringbuf_[3].c_str()));
+		break;
+		
+	    case en_getYawPID:
+		Control.getYawPID();
+		break;
+		
+	    case en_zeroGyros:
+		AHRS.zeroGyros();
+		break;
+		
 	    case en_exit:
 		exit(1);
 		break;
@@ -120,8 +157,14 @@ void CLI_class::initialiseMap_()
     lineMap_["readconfig"] = en_readconfig;
     lineMap_["dr"] = en_dumprawsensors;
     lineMap_["ds"] = en_dumpsensors;
+    lineMap_["drm"] = en_dumprawmag;
     lineMap_["drx"] = en_dumprx;
     lineMap_["resetmpu"] = en_resetmpu;
     lineMap_["rr"] = en_readregister;
+    lineMap_["spid"] = en_setpid;
+    lineMap_["gpid"] = en_getpid;
+    lineMap_["sypid"] = en_setYawPID;
+    lineMap_["gypid"] = en_getYawPID;
+    lineMap_["zerogyros"] = en_zeroGyros;
     lineMap_["exit"] = en_exit;
 }

@@ -27,6 +27,9 @@ struct s_calibratedData
     double p;
     double q;
     double r;
+    double mag_x;
+    double mag_y;
+    double mag_z;
 };
 
 struct s_euler
@@ -44,7 +47,10 @@ public:
     virtual ~AHRSClass();
     void update();
     void readConfig();
+    void zeroGyros();
+    
     s_calibratedData calibratedData;
+    s_calibratedData calibratedDataFiltered;
     s_rawData rawData_;
     s_euler orientation;
     s_euler accelAngles;
@@ -53,7 +59,14 @@ private:
     void calibrateData_();
     void filter_();
     void calcAccelAngles_();
-    s_rawData zeroPoints_;
+    
+    s_calibratedData zeroPoints_;
+    
+    void DLPF();
+#define NZEROS 3
+#define NPOLES 3
+#define GAIN   3.450423889e+02
+    double xv[NZEROS + 1], yv[NPOLES + 1];
 };
 
 extern AHRSClass AHRS;

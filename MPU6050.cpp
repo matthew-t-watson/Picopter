@@ -7,11 +7,10 @@
 
 #include "MPU6050.h"
 
-MPU6050Class MPU6050Interface;
+MPU6050Class MPU6050;
 
 MPU6050Class::MPU6050Class()
 {
-    initialise();
 }
 
 MPU6050Class::~MPU6050Class()
@@ -49,10 +48,13 @@ bool MPU6050Class::checkConnection()
 
 void MPU6050Class::initialise()
 {
+    checkConnection();
     setPowerManagement1_(MPU6050_CLOCK_PLL_XGYRO); //Clear sleep bit and set clock source
     setSampleRateDivider_(0);
     setGyroConfig_(MPU6050_GYRO_FS_2000);
     setAccelConfig_(MPU6050_ACCEL_FS_16);
+    setDLPFConfig_(MPU6050_DLPF_BW_42);
+    enablePassthrough_();
 }
 
 int MPU6050Class::setSampleRateDivider_(unsigned char value)
@@ -83,4 +85,10 @@ int MPU6050Class::setPowerManagement1_(unsigned char config)
 int MPU6050Class::setPowerManagement2_(unsigned char config)
 {
     return(I2CInterface.writeRegister(MPU6050_ADDRESS, MPU6050_RA_PWR_MGMT_2, &config, 1));
+}
+
+void MPU6050Class::enablePassthrough_()
+{
+    uint8_t buf = 0b00000010;
+    I2CInterface.writeRegister(MPU6050_ADDRESS, MPU6050_RA_INT_PIN_CFG, &buf, 1);
 }

@@ -20,7 +20,10 @@ public:
     LoggerClass();
     LoggerClass(const LoggerClass& orig);
     virtual ~LoggerClass();
+    
     void open(const char* filename);
+    
+    bool logging;
     
 private:
 

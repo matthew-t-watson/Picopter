@@ -52,19 +52,43 @@ struct s_rxWidths
     uint16_t sw2;
 };
 
+struct s_rxcalibrated
+{
+    float pitch;
+    float roll;
+    float throttle;
+    float yaw;
+    bool sw1;
+    bool sw2;
+};
+
+struct s_pwmwidths
+{
+    uint16_t frontright;
+    uint16_t rearright;
+    uint16_t rearleft;
+    uint16_t frontleft;
+    uint16_t aux1;
+    uint16_t aux2;
+};
+
 class PICInterfaceClass
 {
 public:
     PICInterfaceClass();
     virtual ~PICInterfaceClass();
-    
-    void setPWM(uint16_t widths[]);
+
+    void setPWM();
     void getRX();
-    
+
     s_rxWidths rxWidths;
-    
-private:    
+    s_pwmwidths pwmwidths;
+    s_rxcalibrated rx;
+
+private:
     uint16_t make16_(uint8_t H, uint8_t L);
+    void make8_(uint16_t *tosplit, uint8_t *target);
+    void calibrateRX_();
 
 };
 

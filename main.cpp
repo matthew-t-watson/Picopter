@@ -7,26 +7,23 @@
 
 
 #include "main.h"
+#include "PICInterface.h"
+#include "HMC5883L.h"
 /*
  *
  */
 
-template <class T, void(T::*member_function)()>
-void* thunk(void* p)
-{
-    (static_cast<T*> (p)->*member_function)();
-    return 0;
-}
-
 
 int main(int argc, char** argv)
 {
-    MPU6050Interface.initialise();
-    //Create CLI thread + open
+    MPU6050.initialise();
+    HMC5883L.initialise();
+    AHRS.zeroGyros();
 //    pthread_t CLIthread;
-//    pthread_create(&CLIthread, NULL, thunk<CLI_class, &CLI_class::open>, &CLI);
+//    pthread_create(&CLIthread, NULL, thunk<CLI_class, &CLI_class::open>, &CLI);    
     Timer.start();
     CLI.open();
+    
     while (1)
     {
         sleep(1000);
@@ -34,3 +31,10 @@ int main(int argc, char** argv)
 }
 
 
+
+template <class T, void(T::*member_function)()>
+void* thunk(void* p)
+{
+    (static_cast<T*> (p)->*member_function)();
+    return 0;
+}

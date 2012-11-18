@@ -20,6 +20,7 @@
 #include "Logger.h"
 #include "Timer.h"
 #include "ConfigFile.h"
+#include "Control.h"
 
 
 enum lineString
@@ -31,9 +32,15 @@ enum lineString
     en_readconfig,
     en_dumpsensors,
     en_dumprawsensors,
+    en_dumprawmag,
     en_dumprx,
     en_resetmpu,
     en_readregister,
+    en_setpid,
+    en_getpid,
+    en_setYawPID,
+    en_getYawPID,
+    en_zeroGyros,
     en_exit
 };
 
