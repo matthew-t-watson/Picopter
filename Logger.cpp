@@ -6,6 +6,9 @@
  */
 
 #include "Logger.h"
+#include "Timer.h"
+#include "AHRS.h"
+#include "PICInterface.h"
 
 LoggerClass LogMan;
 std::fstream Log;
@@ -27,8 +30,35 @@ LoggerClass::~LoggerClass()
 void LoggerClass::open(const char* filename)
 {
     Log.open(filename, std::fstream::out);
-//    Log.precision(3);
-//    Log.setf(std::fstream::fixed, std::fstream::floatfield);
+    Log.rdbuf()->pubsetbuf(0, 0); //No buffer
     logging = true;
-//    Log.setf(std::fstream::unitbuf);
+}
+
+void LoggerClass::update()
+{
+    if (logging)
+    {
+	Log << Timer.dt * 1000 << ", "
+		<< AHRS.calibratedData.x << ", "
+		<< AHRS.calibratedData.y << ", "
+		<< AHRS.calibratedData.z << ", "
+		<< AHRS.calibratedData.p << ", "
+		<< AHRS.calibratedData.q << ", "
+		<< AHRS.calibratedData.r << ", "
+		<< AHRS.calibratedData.temp << ", "
+		<< AHRS.calibratedData.mag_x << ", "
+		<< AHRS.calibratedData.mag_y << ", "
+		<< AHRS.calibratedData.mag_z << ", "
+		<< AHRS.accelAngles.phi << ", "
+		<< AHRS.accelAngles.psi << ", "
+		<< AHRS.orientation.phi << ", "
+		<< AHRS.orientation.psi << ", "
+		<< AHRS.orientation.theta << ", "
+		<< PICInterface.rx.pitch << ", "
+		<< PICInterface.rx.roll << ", "
+		<< PICInterface.rx.throttle << ", "
+		<< PICInterface.rx.yaw << ", "
+		//		//Add additional logs below
+		<< std::endl;
+    }
 }

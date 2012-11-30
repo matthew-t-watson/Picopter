@@ -79,7 +79,7 @@ void CLI_class::open()
 		{
 		    AHRS.update();
 		}
-		std::cout << AHRS.calibratedData.x << "\t" << AHRS.calibratedData.y << "\t" << AHRS.calibratedData.z << "\t" << AHRS.calibratedData.p << "\t" << AHRS.calibratedData.q << "\t" << AHRS.calibratedData.r << "\t" << AHRS.calibratedData.temp << std::endl;
+		std::cout << AHRS.calibratedData.x << ", " << AHRS.calibratedData.y << ", " << AHRS.calibratedData.z << ", " << AHRS.calibratedData.p << ", " << AHRS.calibratedData.q << ", " << AHRS.calibratedData.r << ", " << AHRS.calibratedData.temp << std::endl;
 		break;
 
 	    case en_dumprawsensors:
@@ -87,7 +87,7 @@ void CLI_class::open()
 		{
 		    AHRS.update();
 		}
-		std::cout << AHRS.rawData_.x << "\t" << AHRS.rawData_.y << "\t" << AHRS.rawData_.z << "\t" << AHRS.rawData_.p << "\t" << AHRS.rawData_.q << "\t" << AHRS.rawData_.r << std::endl;
+		std::cout << std::dec << AHRS.rawData_.x << ", " << AHRS.rawData_.y << ", " << AHRS.rawData_.z << ", " << AHRS.rawData_.p << ", " << AHRS.rawData_.q << ", " << AHRS.rawData_.r << std::endl;
 		break;
 		
 	    case en_dumprawmag:
@@ -137,6 +137,22 @@ void CLI_class::open()
 		AHRS.zeroGyros();
 		break;
 		
+	    case en_setFilterFreq:
+		AHRS.filterTimeConstant = atof(stringbuf_[1].c_str());
+		break;
+		
+	    case en_getFilterFreq:
+		std::cout << AHRS.filterTimeConstant << std::endl;
+		break;
+		
+	    case en_getdt:
+		std::cout << Timer.dt << std::endl;
+		break;
+		
+	    case en_calibrateAccelerometers:
+		AHRS.calibrateAccelerometers();
+		break;
+		
 	    case en_exit:
 		exit(1);
 		break;
@@ -166,5 +182,9 @@ void CLI_class::initialiseMap_()
     lineMap_["sypid"] = en_setYawPID;
     lineMap_["gypid"] = en_getYawPID;
     lineMap_["zerogyros"] = en_zeroGyros;
+    lineMap_["setfilterfreq"] = en_setFilterFreq;
+    lineMap_["getfilterfreq"] = en_getFilterFreq;
+    lineMap_["gdt"] = en_getdt;
+    lineMap_["calibaccel"] = en_calibrateAccelerometers;
     lineMap_["exit"] = en_exit;
 }

@@ -41,6 +41,10 @@ enum lineString
     en_setYawPID,
     en_getYawPID,
     en_zeroGyros,
+    en_setFilterFreq,
+    en_getFilterFreq,
+    en_getdt,
+    en_calibrateAccelerometers,
     en_exit
 };
 

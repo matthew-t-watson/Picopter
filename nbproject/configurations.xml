@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="80">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>AHRS.h</itemPath>
+      <itemPath>CommandLineInterface.h</itemPath>
+      <itemPath>ConfigFile.h</itemPath>
+      <itemPath>Control.h</itemPath>
+      <itemPath>DLPF.cpp</itemPath>
+      <itemPath>DLPF.h</itemPath>
+      <itemPath>HMC5883L.h</itemPath>
+      <itemPath>I2CInterface.h</itemPath>
+      <itemPath>Logger.h</itemPath>
+      <itemPath>MPU6050.h</itemPath>
+      <itemPath>MPU6050RegDefs.h</itemPath>
+      <itemPath>PICInterface.h</itemPath>
+      <itemPath>Timer.h</itemPath>
+      <itemPath>main.h</itemPath>
+      <itemPath>struct_euler.h</itemPath>
+      <itemPath>struct_rawData.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>AHRS.cpp</itemPath>
+      <itemPath>CommandLineInterface.cpp</itemPath>
+      <itemPath>ConfigFile.cpp</itemPath>
+      <itemPath>Control.cpp</itemPath>
+      <itemPath>HMC5883L.cpp</itemPath>
+      <itemPath>I2CInterface.cpp</itemPath>
+      <itemPath>Kalman.cpp</itemPath>
+      <itemPath>Kalman.h</itemPath>
+      <itemPath>Logger.cpp</itemPath>
+      <itemPath>MPU6050.cpp</itemPath>
+      <itemPath>PICInterface.cpp</itemPath>
+      <itemPath>Timer.cpp</itemPath>
+      <itemPath>main.cpp</itemPath>
+      <itemPath>struct_calibratedData.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>RPiGNU|GNU</compilerSet>
+        <rebuildPropChanged>true</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include</pElem>
+          </incDir>
+          <commandLine>-lrt -lpthread</commandLine>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <linkerAddLib>
+            <pElem>/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/lib</pElem>
+          </linkerAddLib>
+        </linkerTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

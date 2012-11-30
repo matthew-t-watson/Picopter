@@ -9,7 +9,7 @@
 #include "PICInterface.h"
 #include "Control.h"
 
-#define PERIOD 10000000
+#define PERIOD 5000000
 
 TimerClass Timer;
 pthread_mutex_t TimerMutex_;
@@ -19,17 +19,7 @@ TimerClass::TimerClass()
     /* Intialize sigaction struct */
     signalAction.sa_handler = &sig_handler_;
 
-    /* Initialize timer expiration value */
-    timeValue_.tv_sec = 0;
-    timeValue_.tv_nsec = PERIOD;
 
-    /* Initialize timer period */
-    timeInterval_.tv_sec = 0;
-    timeInterval_.tv_nsec = 0;
-
-    /* Set the time to be set value */
-    timeToSet_.it_value = timeValue_;
-    timeToSet_.it_interval = timeInterval_;
 
     /* Connect a signal handler routine to the SIGALRM signal */
     sigaction(SIGALRM, &signalAction, NULL);
@@ -50,15 +40,18 @@ TimerClass::~TimerClass()
 
 void TimerClass::start()
 {
-    started = true;
+    timeValue_.tv_sec = 0;
+    timeValue_.tv_nsec = PERIOD;
+    timeToSet_.it_value = timeValue_;
     timer_settime(timerId, 0, &timeToSet_, NULL);
+    started = true;
 }
 
 void TimerClass::stop()
 {
-    Timer.timeValue_.tv_sec = 0;
-    Timer.timeValue_.tv_nsec = 0;
-    Timer.timeToSet_.it_value = Timer.timeValue_;
+    timeValue_.tv_sec = 0;
+    timeValue_.tv_nsec = 0;
+    timeToSet_.it_value = timeValue_;
     timer_settime(timerId, 0, &timeToSet_, NULL);
     started = false;
 }
@@ -80,43 +73,30 @@ inline void TimerClass::compensate_()
     else
 	Timer.timeValue_.tv_nsec = inttime;
     Timer.timeToSet_.it_value = Timer.timeValue_;
+    timer_settime(timerId, 0, &timeToSet_, NULL);
+}
+
+template <class T, void(T::*member_function)()>
+void* thunk(void* p)
+{
+    (static_cast<T*> (p)->*member_function)();
+    return 0;
 }
 
 void TimerClass::sig_handler_(int signum)
 {
     pthread_mutex_lock(&TimerMutex_);
-    Timer.calcdt_();
     PICInterface.getRX();
+    Timer.calcdt_();
     AHRS.update();
     Control.update();
-    if (LogMan.logging)
-    {
-	Log << Timer.dt * 1000 << ", "
-		<< AHRS.calibratedData.x << ", "
-		<< AHRS.calibratedData.y << ", "
-		<< AHRS.calibratedData.z << ", "
-		<< AHRS.calibratedData.p << ", "
-		<< AHRS.calibratedData.q << ", "
-		<< AHRS.calibratedData.r << ", "
-		<< AHRS.calibratedData.temp << ", "
-		<< AHRS.calibratedData.mag_x << ", "
-		<< AHRS.calibratedData.mag_y << ", "
-		<< AHRS.calibratedData.mag_z << ", "
-		<< AHRS.accelAngles.phi << ", "
-		<< AHRS.accelAngles.psi << ", "
-		<< AHRS.orientation.phi << ", "
-		<< AHRS.orientation.psi << ", "
-		<< AHRS.orientation.theta << ", "
-		<< PICInterface.rx.pitch << ", "
-		<< PICInterface.rx.roll << ", "
-		<< PICInterface.rx.throttle << ", "
-		<< PICInterface.rx.yaw << ", "
-		<< PICInterface.rx.sw1 << ", "
-		<< PICInterface.rx.sw2 << ", "
-		<< std::endl;
-    }
-
-    //    std::cout << std::dec << AHRS.rawData_.mag_x << ", " << AHRS.rawData_.mag_y << ", " << AHRS.rawData_.mag_z << std::endl;
+    LogMan.update();
+    
+    
+//    pthread_t logThread;
+//    pthread_create(&logThread, NULL, thunk<LoggerClass, &LoggerClass::update>, &LogMan); 
+    
+//        std::cout << std::dec << AHRS.rawData_.mag_x << ", " << AHRS.rawData_.mag_y << ", " << AHRS.rawData_.mag_z << std::endl;
     //    std::cout << PICInterface.pwmwidths.frontright << ", " << PICInterface.pwmwidths.rearright << ", " << PICInterface.pwmwidths.rearleft << ", " << PICInterface.pwmwidths.frontleft << std::endl;
     //    std::cout << PICInterface.rx.pitch << ", " << PICInterface.rx.roll << ", " << PICInterface.rx.throttle << ", " << PICInterface.rx.yaw << ", " << PICInterface.rx.sw1 << ", " << PICInterface.rx.sw2 << std::endl;
     //    std::cout << PICInterface.rxWidths.pitch << ", " << PICInterface.rxWidths.roll << ", " << PICInterface.rxWidths.throttle << ", " << PICInterface.rxWidths.yaw << ", " << PICInterface.rxWidths.sw1 << ", " << PICInterface.rxWidths.sw2 << ", " << std::endl;
@@ -125,6 +105,5 @@ void TimerClass::sig_handler_(int signum)
     //    std::cout << AHRS.calibratedData.x << ", " << AHRS.calibratedData.y << ", " << AHRS.calibratedData.z << ", " << AHRS.calibratedData.p << ", " << AHRS.calibratedData.q << ", " << AHRS.calibratedData.r << std::endl;
 
     Timer.compensate_();
-    Timer.start();
     pthread_mutex_unlock(&TimerMutex_);
 }

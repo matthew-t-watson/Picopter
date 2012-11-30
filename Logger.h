@@ -22,6 +22,7 @@ public:
     virtual ~LoggerClass();
     
     void open(const char* filename);
+    void update();
     
     bool logging;
     

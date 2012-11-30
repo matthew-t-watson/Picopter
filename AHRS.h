@@ -15,29 +15,18 @@
 #include "Timer.h"
 #include "MPU6050.h"
 #include "ConfigFile.h"
+#include "DLPF.h"
+#include "Kalman.h"
+
+#include "struct_rawData.h"
+#include "struct_calibratedData.h"
+#include "struct_euler.h"
 
 #define pi 3.14159265358979
+const double g = 9.81816;
 
-struct s_calibratedData
-{
-    double x;
-    double y;
-    double z;
-    double temp;
-    double p;
-    double q;
-    double r;
-    double mag_x;
-    double mag_y;
-    double mag_z;
-};
 
-struct s_euler
-{
-    double phi;
-    double psi;
-    double theta;
-};
+
 
 class AHRSClass
 {
@@ -48,25 +37,24 @@ public:
     void update();
     void readConfig();
     void zeroGyros();
+    void calibrateAccelerometers();
     
     s_calibratedData calibratedData;
-    s_calibratedData calibratedDataFiltered;
     s_rawData rawData_;
     s_euler orientation;
     s_euler accelAngles;
+    double filterTimeConstant;
 private:
     void getSensors_();
     void calibrateData_();
+    void temperatureCompensate_();
     void filter_();
-    void calcAccelAngles_();
+    double magnitude_(double x, double y, double z);
+    void calcAccelAngles_(s_calibratedData* data, s_euler* angles);
+    DLPF xDLPF, yDLPF, zDLPF;
+    KalmanClass kalmanPhi_, kalmanPsi_;
     
     s_calibratedData zeroPoints_;
-    
-    void DLPF();
-#define NZEROS 3
-#define NPOLES 3
-#define GAIN   3.450423889e+02
-    double xv[NZEROS + 1], yv[NPOLES + 1];
 };
 
 extern AHRSClass AHRS;

@@ -34,14 +34,13 @@ public:
     void getPID();
     void setYawPID(int p, int i, int d);
     void getYawPID();
-    s_orientation integral;
 private:
-    void constrain_(double* value, float range);
-    
+    void constrain_(double* value, float range);    
     s_orientation error;
     s_orientation prevError;
-    s_orientation differential;
     s_orientation pid;
+    s_orientation integral;
+    s_orientation differential;
     s_PID pidconstants;
     s_PID yawPIDConstants;
 };

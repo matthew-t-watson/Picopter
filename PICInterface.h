@@ -82,13 +82,17 @@ public:
     void getRX();
 
     s_rxWidths rxWidths;
+#define FILTER_LEN 10
+    s_rxWidths rxWidthsHist[FILTER_LEN];
     s_pwmwidths pwmwidths;
     s_rxcalibrated rx;
+    s_rxcalibrated rxfiltered;
 
 private:
     uint16_t make16_(uint8_t H, uint8_t L);
     void make8_(uint16_t *tosplit, uint8_t *target);
     void calibrateRX_();
+    s_rxWidths averageRX_(s_rxWidths rxinput[], int len);
 
 };
 

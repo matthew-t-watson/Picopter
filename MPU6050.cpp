@@ -51,7 +51,7 @@ void MPU6050Class::initialise()
     checkConnection();
     setPowerManagement1_(MPU6050_CLOCK_PLL_XGYRO); //Clear sleep bit and set clock source
     setSampleRateDivider_(0);
-    setGyroConfig_(MPU6050_GYRO_FS_2000);
+    setGyroConfig_(MPU6050_GYRO_FS_500);
     setAccelConfig_(MPU6050_ACCEL_FS_16);
     setDLPFConfig_(MPU6050_DLPF_BW_42);
     enablePassthrough_();

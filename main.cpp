@@ -12,16 +12,20 @@
 /*
  *
  */
-
+template <class T, void(T::*member_function)()>
+void* thunk(void* p)
+{
+    (static_cast<T*> (p)->*member_function)();
+    return 0;
+}
 
 int main(int argc, char** argv)
 {
-    MPU6050.initialise();
     HMC5883L.initialise();
-    AHRS.zeroGyros();
+    MPU6050.initialise();
 //    pthread_t CLIthread;
 //    pthread_create(&CLIthread, NULL, thunk<CLI_class, &CLI_class::open>, &CLI);    
-    Timer.start();
+//    Timer.start();
     CLI.open();
     
     while (1)
@@ -32,9 +36,4 @@ int main(int argc, char** argv)
 
 
 
-template <class T, void(T::*member_function)()>
-void* thunk(void* p)
-{
-    (static_cast<T*> (p)->*member_function)();
-    return 0;
-}
+

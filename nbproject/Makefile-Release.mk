@@ -39,11 +39,13 @@ OBJECTFILES= \
 	${OBJECTDIR}/HMC5883L.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/I2CInterface.o \
+	${OBJECTDIR}/Kalman.o \
 	${OBJECTDIR}/PICInterface.o \
 	${OBJECTDIR}/Control.o \
 	${OBJECTDIR}/MPU6050.o \
 	${OBJECTDIR}/ConfigFile.o \
 	${OBJECTDIR}/Logger.o \
+	${OBJECTDIR}/DLPF.o \
 	${OBJECTDIR}/Timer.o
 
 
@@ -96,6 +98,11 @@ ${OBJECTDIR}/I2CInterface.o: nbproject/Makefile-${CND_CONF}.mk I2CInterface.cpp
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/I2CInterface.o I2CInterface.cpp
 
+${OBJECTDIR}/Kalman.o: nbproject/Makefile-${CND_CONF}.mk Kalman.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/Kalman.o Kalman.cpp
+
 ${OBJECTDIR}/PICInterface.o: nbproject/Makefile-${CND_CONF}.mk PICInterface.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
@@ -120,6 +127,11 @@ ${OBJECTDIR}/Logger.o: nbproject/Makefile-${CND_CONF}.mk Logger.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/Logger.o Logger.cpp
+
+${OBJECTDIR}/DLPF.o: nbproject/Makefile-${CND_CONF}.mk DLPF.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/DLPF.o DLPF.cpp
 
 ${OBJECTDIR}/Timer.o: nbproject/Makefile-${CND_CONF}.mk Timer.cpp 
 	${MKDIR} -p ${OBJECTDIR}

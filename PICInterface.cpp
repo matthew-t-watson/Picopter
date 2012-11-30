@@ -29,20 +29,20 @@ PICInterfaceClass::~PICInterfaceClass()
 void PICInterfaceClass::setPWM()
 {
     uint8_t widthsChar[13]; //+1 for pwm_fire bit
-    make8_ (&pwmwidths.frontright, &widthsChar[0]);
-    make8_ (&pwmwidths.rearright, &widthsChar[2]);
-    make8_ (&pwmwidths.rearleft, &widthsChar[4]);
-    make8_ (&pwmwidths.frontleft, &widthsChar[6]);
-    make8_ (&pwmwidths.aux1, &widthsChar[8]);
-    make8_ (&pwmwidths.aux2, &widthsChar[10]);
-    
+    make8_(&pwmwidths.frontright, &widthsChar[0]);
+    make8_(&pwmwidths.rearright, &widthsChar[2]);
+    make8_(&pwmwidths.rearleft, &widthsChar[4]);
+    make8_(&pwmwidths.frontleft, &widthsChar[6]);
+    make8_(&pwmwidths.aux1, &widthsChar[8]);
+    make8_(&pwmwidths.aux2, &widthsChar[10]);
+
     I2CInterface.writeRegister(PIC_ADDRESS, REG_PWM1H, widthsChar, 13);
 }
 
 void PICInterfaceClass::getRX()
 {
     uint8_t widthsChar[12] = {0};
-    
+
     //Appears to generate read errors above ~5 bytes, returning only 1's
     //	I2CInterface.readRegister(PIC_ADDRESS, REG_RX1H, widthsChar, sizeof(widthsChar));
     I2CInterface.readRegister(PIC_ADDRESS, REG_RX1H, &widthsChar[0], 2);
@@ -57,16 +57,24 @@ void PICInterfaceClass::getRX()
     rxWidths.yaw = make16_(widthsChar[6], widthsChar[7]);
     rxWidths.sw1 = make16_(widthsChar[8], widthsChar[9]);
     rxWidths.sw2 = make16_(widthsChar[10], widthsChar[11]);
+
+    static int i = 0;
+    rxWidthsHist[i] = rxWidths;
+    i++;
+    if (i == FILTER_LEN)
+	i = 0;
     
+    rxWidths = averageRX_(rxWidthsHist, FILTER_LEN);
+
     calibrateRX_();
 }
 
 inline void PICInterfaceClass::calibrateRX_()
 {
-    rx.pitch = PITCH_RANGE * (static_cast<float>(rxWidths.pitch - ((RX_MAX - RX_MIN)/2) - RX_MIN)/(RX_MAX - RX_MIN));
-    rx.roll = ROLL_RANGE * (static_cast<float>(rxWidths.roll - ((RX_MAX - RX_MIN)/2) - RX_MIN)/(RX_MAX - RX_MIN));
-    rx.yaw = YAW_RANGE * (static_cast<float>(rxWidths.yaw - ((RX_MAX - RX_MIN)/2) - RX_MIN)/(RX_MAX - RX_MIN));
-    rx.throttle = static_cast<float>(rxWidths.throttle - RX_MIN)/(RX_MAX - RX_MIN);
+    rx.pitch = PITCH_RANGE * (static_cast<float> (rxWidths.pitch - ((RX_MAX - RX_MIN) / 2) - RX_MIN) / (RX_MAX - RX_MIN));
+    rx.roll = ROLL_RANGE * (static_cast<float> (rxWidths.roll - ((RX_MAX - RX_MIN) / 2) - RX_MIN) / (RX_MAX - RX_MIN));
+    rx.yaw = YAW_RANGE * (static_cast<float> (rxWidths.yaw - ((RX_MAX - RX_MIN) / 2) - RX_MIN) / (RX_MAX - RX_MIN));
+    rx.throttle = static_cast<float> (rxWidths.throttle - RX_MIN) / (RX_MAX - RX_MIN);
     rx.sw1 = rxWidths.sw1 > 15000;
     rx.sw2 = rxWidths.sw2 > 15000;
     
@@ -80,7 +88,27 @@ inline uint16_t PICInterfaceClass::make16_(uint8_t H, uint8_t L)
 
 inline void PICInterfaceClass::make8_(uint16_t *tosplit, uint8_t *target)
 {
-    *target = static_cast<uint8_t>((*tosplit >> 8) & 0xFF);
-    *(target+1) = static_cast<uint8_t>(*tosplit & 0xFF);
+    *target = static_cast<uint8_t> ((*tosplit >> 8) & 0xFF);
+    *(target + 1) = static_cast<uint8_t> (*tosplit & 0xFF);
 }
 
+inline s_rxWidths PICInterfaceClass::averageRX_(s_rxWidths rxinput[], int len)
+{
+    unsigned int pitch = 0;
+    unsigned int roll = 0;
+    unsigned int throttle = 0;
+    unsigned int yaw = 0;
+    for (int k = 0; k < len; k++)
+    {
+	pitch += rxinput[k].pitch;
+	roll += rxinput[k].roll;
+	throttle += rxinput[k].throttle;
+	yaw += rxinput[k].yaw;
+    }
+    s_rxWidths result;
+    result.pitch = pitch / len;
+    result.roll = roll / len;
+    result.throttle = throttle / len;
+    result.yaw = yaw / len;
+    return result;
+}

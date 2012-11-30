@@ -17,10 +17,10 @@ ControlClass Control;
 ControlClass::ControlClass()
 {
     pidconstants.kp = 17;
-    pidconstants.ki = 0;
+    pidconstants.ki = 30;
     pidconstants.kd = 10;
     
-    yawPIDConstants.kp = 50;
+    yawPIDConstants.kp = 40;
     yawPIDConstants.ki = 0;
     yawPIDConstants.kd = 0;
 }
@@ -49,13 +49,13 @@ void ControlClass::update()
     integral.psi += error.psi * Timer.dt;
     integral.theta += error.theta * Timer.dt;
     
-    constrain_ (&integral.phi, 0.05);
-    constrain_ (&integral.psi, 0.05);
-    constrain_ (&integral.theta, 0.05);
+    constrain_ (&integral.phi, 0.5);
+    constrain_ (&integral.psi, 0.5);
+    constrain_ (&integral.theta, 0.5);
 
     pid.phi = pidconstants.kp * error.phi + pidconstants.kd * differential.phi + pidconstants.ki * integral.phi;
     pid.psi = pidconstants.kp * error.psi + pidconstants.kd * differential.psi + pidconstants.ki * integral.psi;
-    pid.theta = yawPIDConstants.kp * error.theta + yawPIDConstants.kd * differential.theta;
+    pid.theta = yawPIDConstants.kp * error.theta;// + yawPIDConstants.kd * differential.theta;
 
 
     PICInterface.pwmwidths.frontleft = ((PICInterface.rx.throttle * (MOTOR_MAX - MOTOR_MIN)) + MOTOR_MIN) - pid.phi - pid.psi + pid.theta;
