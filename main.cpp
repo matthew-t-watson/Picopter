@@ -25,7 +25,7 @@ int main(int argc, char** argv)
     MPU6050.initialise();
 //    pthread_t CLIthread;
 //    pthread_create(&CLIthread, NULL, thunk<CLI_class, &CLI_class::open>, &CLI);    
-//    Timer.start();
+    Timer.start();
     CLI.open();
     
     while (1)

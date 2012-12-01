@@ -91,7 +91,7 @@ void AHRSClass::filter_()
     kalmanPhi_.predict(&calibratedData.p, &orientation.phi, &Timer.dt);
     kalmanPsi_.predict(&calibratedData.q, &orientation.psi, &Timer.dt);
     
-    double magnitude = magnitude_(calibratedData.x, calibratedData.x, calibratedData.x);
+    double magnitude = magnitude_(calibratedData.x, calibratedData.y, calibratedData.z);
     if(magnitude > 14 || magnitude < 7.14)
     {
 	kalmanPhi_.update(&accelAngles.phi, &orientation.phi);
@@ -106,7 +106,7 @@ double AHRSClass::magnitude_(double x, double y, double z)
     return sqrt(pow(x,2) + pow(y,2) + pow(z,2));
 }
 
-void AHRSClass::calibrateAccelerometers()
+void AHRSClass::calibrateAccelerometers() //Currently not working as intended
 {
     #define orientation_number 6
     double accel_means[3][orientation_number] = {0};

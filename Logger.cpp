@@ -58,7 +58,7 @@ void LoggerClass::update()
 		<< PICInterface.rx.roll << ", "
 		<< PICInterface.rx.throttle << ", "
 		<< PICInterface.rx.yaw << ", "
-		//		//Add additional logs below
+		//		//Add additional logs belowr
 		<< std::endl;
     }
 }
