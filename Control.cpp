@@ -17,7 +17,7 @@ ControlClass Control;
 ControlClass::ControlClass()
 {
     pidconstants.kp = 17;
-    pidconstants.ki = 30;
+    pidconstants.ki = 100;
     pidconstants.kd = 10;
     
     yawPIDConstants.kp = 40;
@@ -49,9 +49,9 @@ void ControlClass::update()
     integral.psi += error.psi * Timer.dt;
     integral.theta += error.theta * Timer.dt;
     
-    constrain_ (&integral.phi, 0.5);
-    constrain_ (&integral.psi, 0.5);
-    constrain_ (&integral.theta, 0.5);
+    constrain_ (&integral.phi, 0.1);
+    constrain_ (&integral.psi, 0.1);
+    constrain_ (&integral.theta, 0.1);
 
     pid.phi = pidconstants.kp * error.phi + pidconstants.kd * differential.phi + pidconstants.ki * integral.phi;
     pid.psi = pidconstants.kp * error.psi + pidconstants.kd * differential.psi + pidconstants.ki * integral.psi;

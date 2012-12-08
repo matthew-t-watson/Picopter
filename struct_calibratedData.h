@@ -17,9 +17,9 @@ struct s_calibratedData
     double p;
     double q;
     double r;
-    double mag_x;
-    double mag_y;
-    double mag_z;
+    double magx;
+    double magy;
+    double magz;
 };
 
 
