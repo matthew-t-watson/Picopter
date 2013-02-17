@@ -22,6 +22,7 @@ struct s_rawData
     int16_t mag_x;
     int16_t mag_y;
     int16_t mag_z;
+    int32_t pressure;
 };
 
 #endif	/* STRUCT_RAWDATA_H */

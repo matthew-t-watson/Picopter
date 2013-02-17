@@ -92,7 +92,7 @@ private:
     uint16_t make16_(uint8_t H, uint8_t L);
     void make8_(uint16_t *tosplit, uint8_t *target);
     void calibrateRX_();
-    s_rxWidths averageRX_(s_rxWidths rxinput[], int len);
+    s_rxWidths averageRX_(s_rxWidths rxinput[], int len, int i);
 
 };
 

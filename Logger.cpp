@@ -9,6 +9,7 @@
 #include "Timer.h"
 #include "AHRS.h"
 #include "PICInterface.h"
+#include "Control.h"
 
 LoggerClass LogMan;
 std::fstream Log;
@@ -49,6 +50,8 @@ void LoggerClass::update()
 		<< AHRS.calibratedData.magx << ", "
 		<< AHRS.calibratedData.magy << ", "
 		<< AHRS.calibratedData.magz << ", "
+		<< AHRS.calibratedData.pressure << ", "
+		<< AHRS.calibratedData.altitude << ", "
 		<< AHRS.accelAngles.phi << ", "
 		<< AHRS.accelAngles.psi << ", "
 		<< AHRS.orientation.phi << ", "
@@ -58,6 +61,13 @@ void LoggerClass::update()
 		<< PICInterface.rx.roll << ", "
 		<< PICInterface.rx.throttle << ", "
 		<< PICInterface.rx.yaw << ", "
+		<< PICInterface.pwmwidths.frontleft << ", "
+		<< PICInterface.pwmwidths.frontright << ", "
+		<< PICInterface.pwmwidths.rearleft << ", "
+		<< PICInterface.pwmwidths.rearright << ", "
+		<< Control.attitudePID.output.phi << ", "
+		<< Control.attitudePID.output.psi << ", "
+		<< Control.attitudePID.output.theta << ", "
 		//		//Add additional logs belowr
 		<< std::endl;
     }

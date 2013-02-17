@@ -46,6 +46,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/ConfigFile.o \
 	${OBJECTDIR}/Logger.o \
 	${OBJECTDIR}/DLPF.o \
+	${OBJECTDIR}/MS5611.o \
 	${OBJECTDIR}/Timer.o
 
 
@@ -132,6 +133,11 @@ ${OBJECTDIR}/DLPF.o: nbproject/Makefile-${CND_CONF}.mk DLPF.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/DLPF.o DLPF.cpp
+
+${OBJECTDIR}/MS5611.o: nbproject/Makefile-${CND_CONF}.mk MS5611.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/MS5611.o MS5611.cpp
 
 ${OBJECTDIR}/Timer.o: nbproject/Makefile-${CND_CONF}.mk Timer.cpp 
 	${MKDIR} -p ${OBJECTDIR}

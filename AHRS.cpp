@@ -7,6 +7,7 @@
 
 #include "AHRS.h"
 #include "HMC5883L.h"
+#include "MS5611.h"
 #include "unistd.h"
 
 //Values calculated from matlab script MgnCalibration
@@ -27,40 +28,32 @@ const double magEllipsoid22_ = 2.1528;
 
 AHRSClass AHRS;
 
-AHRSClass::AHRSClass()
-{
+AHRSClass::AHRSClass() {
     zeroPoints_.x = 0.1786;
     zeroPoints_.y = 0.1545;
     zeroPoints_.z = 0.0911;
-    
+
     //Values calculated from matlab script MgnCalibration
     zeroPoints_.magx = 0.0576;
     zeroPoints_.magy = -0.0929;
     zeroPoints_.magz = -0.0092;
 }
 
-AHRSClass::AHRSClass(const AHRSClass& orig)
-{
+AHRSClass::AHRSClass(const AHRSClass& orig) {
 }
 
-AHRSClass::~AHRSClass()
-{
+AHRSClass::~AHRSClass() {
 }
 
-void AHRSClass::update()
-{
+void AHRSClass::update() {
     getSensors_();
     calibrateData_();
-    //    xDLPF.iterate(&calibratedData.x, &calibratedData.x);
-    //    yDLPF.iterate(&calibratedData.y, &calibratedData.y);
-    //    zDLPF.iterate(&calibratedData.z, &calibratedData.z);
     calcAccelAngles_(&calibratedData, &accelAngles);
     temperatureCompensate_();
-    filter_();
+    fuse_();
 }
 
-void AHRSClass::readConfig()
-{
+void AHRSClass::readConfig() {
     zeroPoints_.x = Config.getValueOfKey<float> ("zero_x");
     zeroPoints_.y = Config.getValueOfKey<float> ("zero_y");
     zeroPoints_.z = Config.getValueOfKey<float> ("zero_z");
@@ -71,14 +64,13 @@ void AHRSClass::readConfig()
 
 //Collect data from all the sensors. Currently only the MPU is collected.
 
-void AHRSClass::getSensors_()
-{
+void AHRSClass::getSensors_() {
     MPU6050.getSensors(&rawData_);
     HMC5883L.getField(&rawData_);
+    MS5611.getPressure(&rawData_.pressure);
 }
 
-void AHRSClass::calibrateData_()
-{
+void AHRSClass::calibrateData_() {
     calibratedData.x = (rawData_.x * (9.81 / 2048.0));
     calibratedData.y = (rawData_.y * (9.81 / 2048.0));
     calibratedData.z = (rawData_.z * (9.81 / 2048.0));
@@ -86,13 +78,14 @@ void AHRSClass::calibrateData_()
     calibratedData.p = (rawData_.p / 65.5);
     calibratedData.q = (rawData_.q / 65.5);
     calibratedData.r = (rawData_.r / 65.5);
-
-    calibratedData.q = -calibratedData.q;
-    calibratedData.p = -calibratedData.p;
-
     calibratedData.magx = rawData_.mag_x / 1090.0;
     calibratedData.magy = rawData_.mag_y / 1090.0;
     calibratedData.magz = rawData_.mag_z / 1090.0;
+    calibratedData.pressure = rawData_.pressure; //Pa	
+    calibratedData.altitude = ((-8.31447 * 288.15) / (9.80665 * 0.0289644)) * log(calibratedData.pressure / 101325);
+
+    calibratedData.q = -calibratedData.q;
+
 
     //Accelerometer scale and bias correction
     static double acceltemp[3];
@@ -102,10 +95,10 @@ void AHRSClass::calibrateData_()
     calibratedData.x = accelEllipsoid00_ * acceltemp[0] + accelEllipsoid01_ * acceltemp[1] + accelEllipsoid02_ * acceltemp[2];
     calibratedData.y = accelEllipsoid11_ * acceltemp[1] + accelEllipsoid12_ * acceltemp[2];
     calibratedData.z = accelEllipsoid22_ * acceltemp[2];
-    
-    
-    
-    //Magnetmometer scale and bias correction
+
+    calibratedData.y = -calibratedData.y; //Calibration elipsoid is somehow inverting y axis, need to fix
+
+    //Magnetometer scale and bias correction
     static double magtemp[3];
     magtemp[0] = calibratedData.magx - zeroPoints_.magx;
     magtemp[1] = calibratedData.magy - zeroPoints_.magy;
@@ -113,32 +106,42 @@ void AHRSClass::calibrateData_()
     calibratedData.magx = magEllipsoid00_ * magtemp[0] + magEllipsoid01_ * magtemp[1] + magEllipsoid02_ * magtemp[2];
     calibratedData.magy = magEllipsoid11_ * magtemp[1] + magEllipsoid12_ * magtemp[2];
     calibratedData.magz = magEllipsoid22_ * magtemp[2];
+
+    //Altitude LPF
+#define LENGTH 20
+    static int i = 0;
+    static double mvAvg[LENGTH] = {0};
+    mvAvg[i] = calibratedData.altitude;
+    calibratedData.altitude = 0;
+    for(int k = 0; k < LENGTH; k++) {
+	calibratedData.altitude += mvAvg[k];
+    }
+    calibratedData.altitude /= LENGTH;
+    i++;
+    if(i == LENGTH) {
+	i = 0;
+    }
 }
 
-inline void AHRSClass::temperatureCompensate_()
-{
+inline void AHRSClass::temperatureCompensate_() {
     calibratedData.p -= 0.0089 * calibratedData.temp - 1.36;
     calibratedData.q -= 0.0026 * calibratedData.temp + 0.51;
     calibratedData.r -= 0.02405 * calibratedData.temp - 2.823;
 }
 
-void AHRSClass::calcAccelAngles_(s_calibratedData* data, s_euler* angles)
-{
+void AHRSClass::calcAccelAngles_(s_calibratedData* data, s_euler* angles) {
     angles->phi = (180 / pi) * atan(data->y / sqrt(pow(data->x, 2) + pow(data->z, 2)));
     angles->psi = (180 / pi) * atan(data->x / sqrt(pow(data->y, 2) + pow(data->z, 2)));
 }
 
-void AHRSClass::filter_()
-{
-    //    orientation.phi = (orientation.phi + calibratedData.p * Timer.dt) * 0.99 + accelAngles.phi * 0.01;
-    //    orientation.psi = (orientation.psi + calibratedData.q * Timer.dt) * 0.99 + accelAngles.psi * 0.01;
-
-    kalmanPhi_.predict(&calibratedData.p, &orientation.phi, &Timer.dt);
-    kalmanPsi_.predict(&calibratedData.q, &orientation.psi, &Timer.dt);
+void AHRSClass::fuse_() {
+    if(Timer.dt < 0.02) {
+	kalmanPhi_.predict(&calibratedData.p, &orientation.phi, &Timer.dt);
+	kalmanPsi_.predict(&calibratedData.q, &orientation.psi, &Timer.dt);
+    }
 
     double magnitude = magnitude_(calibratedData.x, calibratedData.y, calibratedData.z);
-    if (magnitude > 14 || magnitude < 7.14)
-    {
+    if(magnitude > 14 || magnitude < 7.14) {
 	kalmanPhi_.update(&accelAngles.phi, &orientation.phi);
 	kalmanPsi_.update(&accelAngles.psi, &orientation.psi);
     }
@@ -146,8 +149,7 @@ void AHRSClass::filter_()
     orientation.theta += calibratedData.r * Timer.dt;
 }
 
-double AHRSClass::magnitude_(double x, double y, double z)
-{
+double AHRSClass::magnitude_(double x, double y, double z) {
     return sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
 }
 
@@ -156,15 +158,13 @@ void AHRSClass::calibrateAccelerometers() //Currently not working as intended
 #define orientation_number 6
     double accel_means[3][orientation_number] = {0};
     //Gather mean accel data from 6 different orientations
-    for (uint8_t orientation_count = 0; orientation_count < 6; orientation_count++)
-    {
+    for(uint8_t orientation_count = 0; orientation_count < 6; orientation_count++) {
 	std::cout << "Place vehicle into orientation " << std::dec << orientation_count << " and press enter" << std::endl;
 	std::string trash;
 	std::getline(std::cin, trash);
 	std::cout << "Measuring" << std::endl;
 
-	for (uint16_t sample_number = 0; sample_number < 1000; sample_number++)
-	{
+	for(uint16_t sample_number = 0; sample_number < 1000; sample_number++) {
 	    update();
 	    accel_means[0][orientation_count] += calibratedData.x;
 	    accel_means[1][orientation_count] += calibratedData.y;
@@ -186,10 +186,8 @@ void AHRSClass::calibrateAccelerometers() //Currently not working as intended
     float temp2[3] = {0};
     float temp1[3] = {0};
 #define iteration_number 30
-    for (uint8_t iteration_count = 0; iteration_count < iteration_number; iteration_count++)
-    {
-	for (uint8_t orientation_count = 0; orientation_count < 6; orientation_count++)
-	{
+    for(uint8_t iteration_count = 0; iteration_count < iteration_number; iteration_count++) {
+	for(uint8_t orientation_count = 0; orientation_count < 6; orientation_count++) {
 	    temp2[0] = accel_means[0][orientation_count] - accel_biases[0];
 	    temp2[1] = accel_means[1][orientation_count] - accel_biases[1];
 	    temp2[2] = accel_means[2][orientation_count] - accel_biases[2];
@@ -213,8 +211,7 @@ void AHRSClass::calibrateAccelerometers() //Currently not working as intended
 
 }
 
-void AHRSClass::zeroGyros()
-{
+void AHRSClass::zeroGyros() {
     //    Timer.stop();
     //    usleep(50000);
     zeroPoints_.p = 0;
@@ -222,8 +219,7 @@ void AHRSClass::zeroGyros()
     zeroPoints_.r = 0;
 
     double sums[3] = {0};
-    for (int i = 0; i < 100; i++)
-    {
+    for(int i = 0; i < 100; i++) {
 	getSensors_();
 	calibrateData_();
 	sums[0] += calibratedData.p;

@@ -10,8 +10,8 @@
 KalmanClass::KalmanClass()
 {
     Q_angle_ = 0.000024;
-    Q_bias_ = 0.0001;
-    R_angle_ = 40;
+    Q_bias_ = 0.00005;
+    R_angle_ = 50;
 
     P_[0][0] = 0;
     P_[0][1] = 0;

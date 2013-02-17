@@ -9,7 +9,7 @@
 #include "PICInterface.h"
 #include "Control.h"
 
-#define PERIOD 5000000
+#define PERIOD 2500000
 
 TimerClass Timer;
 pthread_mutex_t TimerMutex_;
@@ -60,7 +60,7 @@ inline void TimerClass::calcdt_()
 {
     oldtime_ = time_;
     clock_gettime(CLOCK_MONOTONIC, &time_);
-    Timer.dt = ((time_.tv_sec * 1000000000 + time_.tv_nsec) - (oldtime_.tv_sec * 1000000000 + oldtime_.tv_nsec)) / 1000000000.0;
+    Timer.dt = ((static_cast<int64_t>(time_.tv_sec) * 1000000000 + static_cast<int64_t>(time_.tv_nsec)) - (static_cast<int64_t>(oldtime_.tv_sec) * 1000000000 + static_cast<int64_t>(oldtime_.tv_nsec))) / 1000000000.0;
 }
 
 inline void TimerClass::compensate_()

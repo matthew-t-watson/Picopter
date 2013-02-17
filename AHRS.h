@@ -48,7 +48,7 @@ private:
     void getSensors_();
     void calibrateData_();
     void temperatureCompensate_();
-    void filter_();
+    void fuse_();
     double magnitude_(double x, double y, double z);
     void calcAccelAngles_(s_calibratedData* data, s_euler* angles);
     DLPF xDLPF, yDLPF, zDLPF;

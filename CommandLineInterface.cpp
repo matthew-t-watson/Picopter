@@ -79,7 +79,7 @@ void CLI_class::open()
 		{
 		    AHRS.update();
 		}
-		std::cout << AHRS.calibratedData.x << ", " << AHRS.calibratedData.y << ", " << AHRS.calibratedData.z << ", " << AHRS.calibratedData.p << ", " << AHRS.calibratedData.q << ", " << AHRS.calibratedData.r << ", " << AHRS.calibratedData.temp << std::endl;
+		std::cout << AHRS.calibratedData.x << ", " << AHRS.calibratedData.y << ", " << AHRS.calibratedData.z << ", " << AHRS.calibratedData.p << ", " << AHRS.calibratedData.q << ", " << AHRS.calibratedData.r << ", " << AHRS.calibratedData.temp << ", " << AHRS.calibratedData.pressure << ", " << AHRS.calibratedData.altitude << std::endl;
 		break;
 
 	    case en_dumprawsensors:
@@ -118,11 +118,11 @@ void CLI_class::open()
 		break;
 		
 	    case en_setpid:
-		Control.setPID(atoi(stringbuf_[1].c_str()), atoi(stringbuf_[2].c_str()), atoi(stringbuf_[3].c_str()));
+		Control.setAttitudePID(atoi(stringbuf_[1].c_str()), atoi(stringbuf_[2].c_str()), atoi(stringbuf_[3].c_str()));
 		break;
 		
 	    case en_getpid:
-		Control.getPID();
+		Control.getAttitudePID();
 		break;
 
 		case en_setYawPID:

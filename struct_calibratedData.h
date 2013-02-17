@@ -20,6 +20,8 @@ struct s_calibratedData
     double magx;
     double magy;
     double magz;
+    double pressure;
+    double altitude;
 };
 
 
