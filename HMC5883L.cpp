@@ -58,9 +58,9 @@ bool HMC5883LClass::checkCommunication_()
 {
     uint8_t buf[3] = {0};
     I2CInterface.readRegister(HMC5883L_ADDRESS, HMC5883L_RA_ID_A, buf, 3);
-    if (buf[0] != 'H' | buf[1] != '4' | buf[3] != '3')
+    if (buf[0] != 'H' | buf[1] != '4' | buf[2] != '3')
     {
-	std::cout << "HMC5883L communication failed, recieved" << std::hex << buf[0] << ", " << buf[1] << ", " << buf[2] << std::endl;
+	std::cout << "HMC5883L communication failed, recieved " << buf[0] << ", " << buf[1] << ", " << buf[2] << std::endl;
 	return false;
     }
     return true;

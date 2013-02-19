@@ -42,6 +42,8 @@
       <itemPath>MPU6050.cpp</itemPath>
       <itemPath>MS5611.cpp</itemPath>
       <itemPath>PICInterface.cpp</itemPath>
+      <itemPath>PID.cpp</itemPath>
+      <itemPath>PID.h</itemPath>
       <itemPath>Timer.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>

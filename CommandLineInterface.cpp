@@ -11,47 +11,36 @@
 CLI_class CLI;
 pthread_mutex_t CLImutex;
 
-CLI_class::CLI_class()
-{
+CLI_class::CLI_class() {
     initialiseMap_();
 }
 
-CLI_class::CLI_class(const CLI_class& orig)
-{
+CLI_class::CLI_class(const CLI_class& orig) {
     std::string stringbuf_[6] = {0};
 }
 
-CLI_class::~CLI_class()
-{
+CLI_class::~CLI_class() {
 }
 
-void CLI_class::open()
-{
-    while (1)
-    {
+void CLI_class::open() {
+    while(1) {
 	std::string line;
-	do
-	{
+	do {
 	    std::cout << "Picopter > ";
-	    do
-	    {
+	    do {
 		std::cin.clear();
 		line.clear();
 		std::getline(std::cin, line);
-	    }
-	    while (std::cin.fail());
-	}
-	while (line.length() == 0);
+	    } while(std::cin.fail());
+	} while(line.length() == 0);
 
 	std::stringstream stream(line);
 	int i = 0;
-	while (std::getline(stream, stringbuf_[i], ' '))
-	{
+	while(std::getline(stream, stringbuf_[i], ' ')) {
 	    i++;
 	}
 
-	switch (lineMap_[stringbuf_[0]])
-	{
+	switch(lineMap_[stringbuf_[0]]) {
 	    case en_stringNotDefined:
 		std::cout << stringbuf_[0] << " isn't a valid command" << std::endl;
 		break;
@@ -75,35 +64,31 @@ void CLI_class::open()
 		break;
 
 	    case en_dumpsensors:
-		if(!Timer.started)
-		{
+		if(!Timer.started) {
 		    AHRS.update();
 		}
 		std::cout << AHRS.calibratedData.x << ", " << AHRS.calibratedData.y << ", " << AHRS.calibratedData.z << ", " << AHRS.calibratedData.p << ", " << AHRS.calibratedData.q << ", " << AHRS.calibratedData.r << ", " << AHRS.calibratedData.temp << ", " << AHRS.calibratedData.pressure << ", " << AHRS.calibratedData.altitude << std::endl;
 		break;
 
 	    case en_dumprawsensors:
-		if(!Timer.started)
-		{
+		if(!Timer.started) {
 		    AHRS.update();
 		}
 		std::cout << std::dec << AHRS.rawData_.x << ", " << AHRS.rawData_.y << ", " << AHRS.rawData_.z << ", " << AHRS.rawData_.p << ", " << AHRS.rawData_.q << ", " << AHRS.rawData_.r << std::endl;
 		break;
-		
+
 	    case en_dumprawmag:
-		if (!Timer.started)
-		{
+		if(!Timer.started) {
 		    AHRS.update();
 		}
 		std::cout << AHRS.rawData_.mag_x << ", " << AHRS.rawData_.mag_y << ", " << AHRS.rawData_.mag_z << std::endl;
 		break;
 
 	    case en_dumprx:
-		if(!Timer.started)
-		{
+		if(!Timer.started) {
 		    PICInterface.getRX();
 		}
-		std::cout << PICInterface.rxWidths.pitch << ", " << PICInterface.rxWidths.roll << ", " << PICInterface.rxWidths.throttle << ", " << PICInterface.rxWidths.yaw << ", " << PICInterface.rxWidths.sw1 << ", " << PICInterface.rxWidths.sw2 << ", " << std::endl;
+		std::cout << std::dec << PICInterface.rxWidths.pitch << ", " << PICInterface.rxWidths.roll << ", " << PICInterface.rxWidths.throttle << ", " << PICInterface.rxWidths.yaw << ", " << PICInterface.rxWidths.sw1 << ", " << PICInterface.rxWidths.sw2 << ", " << std::endl;
 		break;
 
 	    case en_resetmpu:
@@ -113,46 +98,52 @@ void CLI_class::open()
 
 	    case en_readregister:
 		unsigned char buf[32];
-		I2CInterface.readRegister(static_cast<unsigned char> (atoi(stringbuf_[1].c_str())), static_cast<unsigned char> (atoi(stringbuf_[2].c_str())), buf, static_cast<unsigned char> (atoi(stringbuf_[3].c_str())));
+		I2CInterface.readRegister(static_cast<unsigned char>(atoi(stringbuf_[1].c_str())), static_cast<unsigned char>(atoi(stringbuf_[2].c_str())), buf, static_cast<unsigned char>(atoi(stringbuf_[3].c_str())));
 		std::cout << buf << std::endl;
 		break;
-		
-	    case en_setpid:
-		Control.setAttitudePID(atoi(stringbuf_[1].c_str()), atoi(stringbuf_[2].c_str()), atoi(stringbuf_[3].c_str()));
+
+	    case en_setRatePID:
+		Control.setRatePID(atof(stringbuf_[1].c_str()), atof(stringbuf_[2].c_str()), atof(stringbuf_[3].c_str()));
 		break;
-		
-	    case en_getpid:
+
+	    case en_getRatePID:
+		Control.getRatePID();
+		break;
+
+	    case en_setAttitudePID:
+		Control.setAttitudePID(atof(stringbuf_[1].c_str()), atof(stringbuf_[2].c_str()), atof(stringbuf_[3].c_str()));
+		break;
+
+	    case en_getAttitudePID:
 		Control.getAttitudePID();
 		break;
 
-		case en_setYawPID:
-		Control.setYawPID(atoi(stringbuf_[1].c_str()), atoi(stringbuf_[2].c_str()), atoi(stringbuf_[3].c_str()));
+	    case en_setYawPID:
 		break;
-		
+
 	    case en_getYawPID:
-		Control.getYawPID();
 		break;
-		
+
 	    case en_zeroGyros:
 		AHRS.zeroGyros();
 		break;
-		
+
 	    case en_setFilterFreq:
 		AHRS.filterTimeConstant = atof(stringbuf_[1].c_str());
 		break;
-		
+
 	    case en_getFilterFreq:
 		std::cout << AHRS.filterTimeConstant << std::endl;
 		break;
-		
+
 	    case en_getdt:
 		std::cout << Timer.dt << std::endl;
 		break;
-		
+
 	    case en_calibrateAccelerometers:
 		AHRS.calibrateAccelerometers();
 		break;
-		
+
 	    case en_exit:
 		exit(1);
 		break;
@@ -164,8 +155,7 @@ void CLI_class::open()
     }
 }
 
-void CLI_class::initialiseMap_()
-{
+void CLI_class::initialiseMap_() {
     lineMap_[""] = en_stringNotDefined;
     lineMap_["openlog"] = en_openlog;
     lineMap_["writelog"] = en_writelog;
@@ -177,10 +167,12 @@ void CLI_class::initialiseMap_()
     lineMap_["drx"] = en_dumprx;
     lineMap_["resetmpu"] = en_resetmpu;
     lineMap_["rr"] = en_readregister;
-    lineMap_["spid"] = en_setpid;
-    lineMap_["gpid"] = en_getpid;
+    lineMap_["srpid"] = en_setRatePID;
+    lineMap_["grpid"] = en_getRatePID;
     lineMap_["sypid"] = en_setYawPID;
     lineMap_["gypid"] = en_getYawPID;
+    lineMap_["sapid"] = en_setAttitudePID;
+    lineMap_["gapid"] = en_getAttitudePID;
     lineMap_["zerogyros"] = en_zeroGyros;
     lineMap_["setfilterfreq"] = en_setFilterFreq;
     lineMap_["getfilterfreq"] = en_getFilterFreq;

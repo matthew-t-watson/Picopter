@@ -8,6 +8,8 @@
 #ifndef CONTROL_H
 #define	CONTROL_H
 
+#include "PID.h"
+
 struct s_orientation
 {
     double phi;
@@ -49,25 +51,27 @@ public:
     ControlClass();
     ControlClass(const ControlClass& orig);
     virtual ~ControlClass();
-    
+
     void update();
-    void setAttitudePID(int p, int i, int d);
+    void setRatePID(float KP, float KI, float KD);
+    void getRatePID();
+    void setAttitudePID(float KP, float KI, float KD);
     void getAttitudePID();
-    void setYawPID(int p, int i, int d);
-    void getYawPID();
-    s_PID attitudePID;
     s_altitudePID altitudePID;
-    
+
 private:
-    void updatePWM_();
-    void attitudeControl_();
+    void updatePWM_(float* throttle, float* pitch, float* roll, float* yaw);
     void evaluateAltitudeControl_();
     void altitudeControl_();
+    void rateControl_(float* pitchrate, float* rollrate, float* yawrate);
+    void attitudeControl_(float* targetPitch, float* targetRoll, float* targetYaw);
     void constrain_(double* value, float range);
+    PIDClass ratePitchPID, rateRollPID, rateYawPID;
+    PIDClass attitudePitchPID, attitudeRollPID;
 #define differentialFilterSize 5
     s_orientation differentialBuf[differentialFilterSize];
     double targetAltitude_;
-    bool alreadySet_;
+    bool altitudeHoldActive_;
 };
 
 extern ControlClass Control;

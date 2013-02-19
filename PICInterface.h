@@ -57,7 +57,9 @@ struct s_rxcalibrated
     float pitch;
     float roll;
     float throttle;
-    float yaw;
+    float yawrate;
+    float pitchrate;
+    float rollrate;
     bool sw1;
     bool sw2;
 };

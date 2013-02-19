@@ -69,12 +69,15 @@ void PICInterfaceClass::getRX() {
 inline void PICInterfaceClass::calibrateRX_() {
     rx.pitch = PITCH_RANGE * (static_cast<float> (rxWidths.pitch - ((RX_MAX - RX_MIN) / 2) - RX_MIN) / (RX_MAX - RX_MIN));
     rx.roll = ROLL_RANGE * (static_cast<float> (rxWidths.roll - ((RX_MAX - RX_MIN) / 2) - RX_MIN) / (RX_MAX - RX_MIN));
-    rx.yaw = YAW_RANGE * (static_cast<float> (rxWidths.yaw - ((RX_MAX - RX_MIN) / 2) - RX_MIN) / (RX_MAX - RX_MIN));
+    rx.yawrate = YAW_RANGE * (static_cast<float> (rxWidths.yaw - ((RX_MAX - RX_MIN) / 2) - RX_MIN) / (RX_MAX - RX_MIN));
     rx.throttle = static_cast<float> (rxWidths.throttle - RX_MIN) / (RX_MAX - RX_MIN);
-    rx.sw1 = rxWidths.sw1 > 15000;
-    rx.sw2 = rxWidths.sw2 > 15000;
+    rx.sw1 = (rxWidths.sw1 > 15000);
+    rx.sw2 = (rxWidths.sw2 > 15000);
+    rx.pitchrate = rx.pitch*5;
+    rx.rollrate = rx.roll*5;
+    
 
-    rx.yaw = -rx.yaw;
+    rx.yawrate = -rx.yawrate;
 }
 
 inline uint16_t PICInterfaceClass::make16_(uint8_t H, uint8_t L) {

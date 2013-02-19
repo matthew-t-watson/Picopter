@@ -60,14 +60,11 @@ void LoggerClass::update()
 		<< PICInterface.rx.pitch << ", "
 		<< PICInterface.rx.roll << ", "
 		<< PICInterface.rx.throttle << ", "
-		<< PICInterface.rx.yaw << ", "
+		<< PICInterface.rx.yawrate << ", "
 		<< PICInterface.pwmwidths.frontleft << ", "
 		<< PICInterface.pwmwidths.frontright << ", "
 		<< PICInterface.pwmwidths.rearleft << ", "
 		<< PICInterface.pwmwidths.rearright << ", "
-		<< Control.attitudePID.output.phi << ", "
-		<< Control.attitudePID.output.psi << ", "
-		<< Control.attitudePID.output.theta << ", "
 		//		//Add additional logs belowr
 		<< std::endl;
     }

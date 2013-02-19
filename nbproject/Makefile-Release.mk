@@ -40,6 +40,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/I2CInterface.o \
 	${OBJECTDIR}/Kalman.o \
+	${OBJECTDIR}/PID.o \
 	${OBJECTDIR}/PICInterface.o \
 	${OBJECTDIR}/Control.o \
 	${OBJECTDIR}/MPU6050.o \
@@ -103,6 +104,11 @@ ${OBJECTDIR}/Kalman.o: nbproject/Makefile-${CND_CONF}.mk Kalman.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/Kalman.o Kalman.cpp
+
+${OBJECTDIR}/PID.o: nbproject/Makefile-${CND_CONF}.mk PID.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/PID.o PID.cpp
 
 ${OBJECTDIR}/PICInterface.o: nbproject/Makefile-${CND_CONF}.mk PICInterface.cpp 
 	${MKDIR} -p ${OBJECTDIR}

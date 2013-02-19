@@ -81,7 +81,7 @@ void AHRSClass::calibrateData_() {
     calibratedData.magx = rawData_.mag_x / 1090.0;
     calibratedData.magy = rawData_.mag_y / 1090.0;
     calibratedData.magz = rawData_.mag_z / 1090.0;
-    calibratedData.pressure = rawData_.pressure; //Pa	
+    calibratedData.pressure = rawData_.pressure; //Pascals	
     calibratedData.altitude = ((-8.31447 * 288.15) / (9.80665 * 0.0289644)) * log(calibratedData.pressure / 101325);
 
     calibratedData.q = -calibratedData.q;
@@ -124,9 +124,17 @@ void AHRSClass::calibrateData_() {
 }
 
 inline void AHRSClass::temperatureCompensate_() {
-    calibratedData.p -= 0.0089 * calibratedData.temp - 1.36;
-    calibratedData.q -= 0.0026 * calibratedData.temp + 0.51;
-    calibratedData.r -= 0.02405 * calibratedData.temp - 2.823;
+    static double tempPow1 = calibratedData.temp;
+    static double tempPow2 = pow(calibratedData.temp, 2);
+    static double tempPow3 = pow(calibratedData.temp, 3);
+    static double tempPow4 = pow(calibratedData.temp, 4);
+    //Coefficients calculated from freezetest4, 4th degree polynomial
+    calibratedData.p -= 8.4877e-9*tempPow4 + 6.4219e-6*tempPow3 + 2.5782e-4*tempPow2 - 0.0041145*tempPow1 - 1.2974;
+    calibratedData.q -= 5.863e-8*tempPow4 - 5.9746e-6*tempPow3 + 5.1324e-5*tempPow2 + 0.0079355*tempPow1 + 0.59859;
+    calibratedData.r -= 4.4929e-8*tempPow4 - 1.6137e-7*tempPow3 + 4.8876e-5*tempPow2 + 0.021246*tempPow1 - 2.9723;
+    calibratedData.x -= -2.8664e-6*tempPow2 + 4.9565e-4*tempPow1;// - 0.0011611;
+    calibratedData.y -= 1.2728e-6*tempPow2 + 6.5989e-6*tempPow1;// + 0.025702;
+    calibratedData.z -= 1.6966e-5*tempPow2 - 0.0035421*tempPow1;// + 0.056; //Z axis accel shows huge temperature drift (15% over 40 degrees)
 }
 
 void AHRSClass::calcAccelAngles_(s_calibratedData* data, s_euler* angles) {

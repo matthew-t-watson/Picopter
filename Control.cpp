@@ -15,19 +15,13 @@ const uint16_t MOTOR_MIN = 9000;
 ControlClass Control;
 
 ControlClass::ControlClass() {
-    attitudePID.constants.kp = 30;
-    attitudePID.constants.ki = 200;
-    attitudePID.constants.kd = 8;
+    ratePitchPID.initialise(16, 0, 0, 9999, 1500);
+    rateRollPID.initialise(16, 0, 0, 9999, 1500);
+    rateYawPID.initialise(40, 0, 0, 9999, 1000);
+    attitudePitchPID.initialise(5, 0, 0, 9999, 1000);
+    attitudeRollPID.initialise(5, 0, 0, 9999, 1000);
 
-    attitudePID.yawConstants.kp = 40;
-    attitudePID.yawConstants.ki = 0;
-    attitudePID.yawConstants.kd = 0;
-    
-    altitudePID.constants.kp = 400;
-    altitudePID.constants.ki = 0;
-    altitudePID.constants.kd = 100;
-    
-    alreadySet_ = false;
+    altitudeHoldActive_ = false;
 }
 
 ControlClass::ControlClass(const ControlClass& orig) {
@@ -37,79 +31,74 @@ ControlClass::~ControlClass() {
 }
 
 void ControlClass::update() {
-    
-    attitudeControl_();
-    evaluateAltitudeControl_(); //Checks to see if altitude control if required, and performs if necessary
-    updatePWM_();    
+    if(PICInterface.rx.sw2 == false) {//if in rate mode
+	rateControl_(&PICInterface.rx.pitchrate, &PICInterface.rx.rollrate, &PICInterface.rx.yawrate);
+    }
+    else if (PICInterface.rx.sw2 == true){
+	attitudeControl_(&PICInterface.rx.pitch, &PICInterface.rx.roll, &PICInterface.rx.yawrate);
+    }
+//        evaluateAltitudeControl_(); //Checks to see if altitude control if required, and performs if necessary
 }
 
-inline void ControlClass::updatePWM_(){
-    PICInterface.pwmwidths.frontleft = ((PICInterface.rx.throttle * (MOTOR_MAX - MOTOR_MIN)) + MOTOR_MIN) - attitudePID.output.phi - attitudePID.output.psi + attitudePID.output.theta + altitudePID.output;
-    PICInterface.pwmwidths.frontright = ((PICInterface.rx.throttle * (MOTOR_MAX - MOTOR_MIN)) + MOTOR_MIN) + attitudePID.output.phi - attitudePID.output.psi - attitudePID.output.theta + altitudePID.output;
-    PICInterface.pwmwidths.rearright = ((PICInterface.rx.throttle * (MOTOR_MAX - MOTOR_MIN)) + MOTOR_MIN) + attitudePID.output.phi + attitudePID.output.psi + attitudePID.output.theta + altitudePID.output;
-    PICInterface.pwmwidths.rearleft = ((PICInterface.rx.throttle * (MOTOR_MAX - MOTOR_MIN)) + MOTOR_MIN) - attitudePID.output.phi + attitudePID.output.psi - attitudePID.output.theta + altitudePID.output;
+
+inline void ControlClass::updatePWM_(float* throttle, float* pitch, float* roll, float* yaw) {
+    PICInterface.pwmwidths.frontleft = ((*throttle * (MOTOR_MAX - MOTOR_MIN)) + MOTOR_MIN) - *pitch + *roll - *yaw + altitudePID.output;
+    PICInterface.pwmwidths.frontright = ((*throttle * (MOTOR_MAX - MOTOR_MIN)) + MOTOR_MIN) - *pitch - *roll + *yaw + altitudePID.output;
+    PICInterface.pwmwidths.rearright = ((*throttle * (MOTOR_MAX - MOTOR_MIN)) + MOTOR_MIN) + *pitch - *roll - *yaw + altitudePID.output;
+    PICInterface.pwmwidths.rearleft = ((*throttle * (MOTOR_MAX - MOTOR_MIN)) + MOTOR_MIN) + *pitch + *roll + *yaw + altitudePID.output;
     PICInterface.setPWM();
 }
 
-inline void ControlClass::attitudeControl_() {
-    attitudePID.prevError = attitudePID.error;
-
-    attitudePID.error.phi = PICInterface.rx.pitch - AHRS.orientation.phi;
-    attitudePID.error.psi = PICInterface.rx.roll - AHRS.orientation.psi;
-    attitudePID.error.theta = PICInterface.rx.yaw - AHRS.calibratedData.r; //Yaw uses rate control instead of angle
-
-    attitudePID.differential.phi = (attitudePID.error.phi - attitudePID.prevError.phi) / Timer.dt;
-    attitudePID.differential.psi = (attitudePID.error.psi - attitudePID.prevError.psi) / Timer.dt;
-    attitudePID.differential.theta = (attitudePID.error.theta - attitudePID.prevError.theta) / Timer.dt;
-
-    attitudePID.integral.phi += attitudePID.error.phi * Timer.dt;
-    attitudePID.integral.psi += attitudePID.error.psi * Timer.dt;
-    attitudePID.integral.theta += attitudePID.error.theta * Timer.dt;
-
-    constrain_(&attitudePID.integral.phi, 0.1);
-    constrain_(&attitudePID.integral.psi, 0.1);
-    constrain_(&attitudePID.integral.theta, 0.1);
-
-    //Moving average filter on differential term
-    static int i;
-    differentialBuf[i] = attitudePID.differential;
-    i++;
-    if(i == differentialFilterSize) {
-	i = 0;
-    }
-    attitudePID.differential.phi = 0;
-    attitudePID.differential.psi = 0;
-    attitudePID.differential.theta = 0;
-    for(int x = 0; x < differentialFilterSize; x++) {
-	attitudePID.differential.phi += differentialBuf[x].phi;
-	attitudePID.differential.psi += differentialBuf[x].psi;
-	attitudePID.differential.theta += differentialBuf[x].theta;
-    }
-    attitudePID.differential.phi /= differentialFilterSize;
-    attitudePID.differential.psi /= differentialFilterSize;
-    attitudePID.differential.theta /= differentialFilterSize;
-
-    attitudePID.output.phi = attitudePID.constants.kp * attitudePID.error.phi + attitudePID.constants.kd * attitudePID.differential.phi + attitudePID.constants.ki * attitudePID.integral.phi;
-    attitudePID.output.psi = attitudePID.constants.kp * attitudePID.error.psi + attitudePID.constants.kd * attitudePID.differential.psi + attitudePID.constants.ki * attitudePID.integral.psi;
-    attitudePID.output.theta = attitudePID.yawConstants.kp * attitudePID.error.theta; // + yawPIDConstants.kd * differential.theta;
-
+void ControlClass::rateControl_(float* pitchrate, float* rollrate, float* yawrate) {
+    ratePitchPID.calculate(&AHRS.calibratedData.p, pitchrate, &Timer.dt);
+    rateRollPID.calculate(&AHRS.calibratedData.q, rollrate, &Timer.dt);
+    rateYawPID.calculate(&AHRS.calibratedData.r, yawrate, &Timer.dt);
+    updatePWM_(&PICInterface.rx.throttle, &ratePitchPID.output, &rateRollPID.output, &rateYawPID.output);
 }
 
-inline void ControlClass::evaluateAltitudeControl_() {
-    if(PICInterface.rxWidths.sw2 > 15000 && alreadySet_ == false) {
+void ControlClass::attitudeControl_(float* targetPitch, float* targetRoll, float* targetYawRate) {
+    attitudePitchPID.calculate(&AHRS.orientation.phi, targetPitch, &Timer.dt);
+    attitudeRollPID.calculate(&AHRS.orientation.psi, targetRoll, &Timer.dt);
+    rateControl_(&attitudePitchPID.output, &attitudeRollPID.output, targetYawRate);
+}
+
+void ControlClass::setRatePID(float KP, float KI, float KD){
+    ratePitchPID.setPID(KP, KI, KD);
+    rateRollPID.setPID(KP, KI, KD);
+}
+
+void ControlClass::getRatePID(){
+    ratePitchPID.getPID();
+    rateRollPID.getPID();
+}
+
+void ControlClass::setAttitudePID(float KP, float KI, float KD){
+    attitudePitchPID.setPID(KP, KI, KD);
+    attitudeRollPID.setPID(KP, KI, KD);
+}
+
+void ControlClass::getAttitudePID(){
+    attitudePitchPID.getPID();
+    attitudeRollPID.getPID();
+}
+
+
+
+void ControlClass::evaluateAltitudeControl_() {
+    if(PICInterface.rxWidths.sw2 > 15000 && altitudeHoldActive_ == false) {
 	targetAltitude_ = AHRS.calibratedData.altitude;
-	alreadySet_ = true;
+	altitudeHoldActive_ = true;
 	altitudeControl_();
 	std::cout << "Altitude hold active at " << targetAltitude_ << "m" << std::endl;
-    } else if(PICInterface.rxWidths.sw2 > 15000 && alreadySet_ == true) {
+    } else if(PICInterface.rxWidths.sw2 > 15000 && altitudeHoldActive_ == true) {
 	altitudeControl_();
     } else if(PICInterface.rxWidths.sw2 < 15000) {
-	alreadySet_ = false;
+	altitudeHoldActive_ = false;
 	altitudePID.output = 0;
     }
 }
 
-inline void ControlClass::altitudeControl_() {
+void ControlClass::altitudeControl_() {
     altitudePID.prevError = altitudePID.error;
     altitudePID.error = targetAltitude_ - AHRS.calibratedData.altitude;
     altitudePID.differential = (altitudePID.error - altitudePID.prevError) / Timer.dt;
@@ -122,22 +111,3 @@ inline void ControlClass::constrain_(double* value, float range) {
     else if(*value < -range) *value = -range;
 }
 
-void ControlClass::setAttitudePID(int p, int i, int d) {
-    attitudePID.constants.kp = p;
-    attitudePID.constants.ki = i;
-    attitudePID.constants.kd = d;
-}
-
-void ControlClass::getAttitudePID() {
-    std::cout << attitudePID.constants.kp << ", " << attitudePID.constants.ki << ", " << attitudePID.constants.kd << std::endl;
-}
-
-void ControlClass::setYawPID(int p, int i, int d) {
-    attitudePID.yawConstants.kp = p;
-    attitudePID.yawConstants.ki = i;
-    attitudePID.yawConstants.kd = d;
-}
-
-void ControlClass::getYawPID() {
-    std::cout << attitudePID.yawConstants.kp << ", " << attitudePID.yawConstants.ki << ", " << attitudePID.yawConstants.kd << std::endl;
-}
