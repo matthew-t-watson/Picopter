@@ -21,8 +21,8 @@ void* thunk(void* p)
 
 int main(int argc, char** argv)
 {
-    HMC5883L.initialise();
     MPU6050.initialise();
+    HMC5883L.initialise();
 //    pthread_t CLIthread;
 //    pthread_create(&CLIthread, NULL, thunk<CLI_class, &CLI_class::open>, &CLI);    
     Timer.start();

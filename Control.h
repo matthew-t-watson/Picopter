@@ -58,6 +58,8 @@ public:
     void setAttitudePID(float KP, float KI, float KD);
     void getAttitudePID();
     s_altitudePID altitudePID;
+    PIDClass ratePitchPID, rateRollPID, rateYawPID;
+    PIDClass attitudePitchPID, attitudeRollPID;
 
 private:
     void updatePWM_(float* throttle, float* pitch, float* roll, float* yaw);
@@ -66,8 +68,6 @@ private:
     void rateControl_(float* pitchrate, float* rollrate, float* yawrate);
     void attitudeControl_(float* targetPitch, float* targetRoll, float* targetYaw);
     void constrain_(double* value, float range);
-    PIDClass ratePitchPID, rateRollPID, rateYawPID;
-    PIDClass attitudePitchPID, attitudeRollPID;
 #define differentialFilterSize 5
     s_orientation differentialBuf[differentialFilterSize];
     double targetAltitude_;

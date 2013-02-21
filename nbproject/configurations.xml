@@ -17,6 +17,7 @@
       <itemPath>MPU6050RegDefs.h</itemPath>
       <itemPath>MS5611.h</itemPath>
       <itemPath>PICInterface.h</itemPath>
+      <itemPath>PID.h</itemPath>
       <itemPath>Timer.h</itemPath>
       <itemPath>main.h</itemPath>
       <itemPath>struct_calibratedData.h</itemPath>
@@ -43,7 +44,6 @@
       <itemPath>MS5611.cpp</itemPath>
       <itemPath>PICInterface.cpp</itemPath>
       <itemPath>PID.cpp</itemPath>
-      <itemPath>PID.h</itemPath>
       <itemPath>Timer.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>

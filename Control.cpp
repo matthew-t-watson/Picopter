@@ -18,8 +18,8 @@ ControlClass::ControlClass() {
     ratePitchPID.initialise(16, 0, 0, 9999, 1500);
     rateRollPID.initialise(16, 0, 0, 9999, 1500);
     rateYawPID.initialise(40, 0, 0, 9999, 1000);
-    attitudePitchPID.initialise(5, 0, 0, 9999, 1000);
-    attitudeRollPID.initialise(5, 0, 0, 9999, 1000);
+    attitudePitchPID.initialise(5, 0, 0.1, 10, 1000);
+    attitudeRollPID.initialise(5, 0, 0.1, 10, 1000);
 
     altitudeHoldActive_ = false;
 }

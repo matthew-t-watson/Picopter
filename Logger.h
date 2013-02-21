@@ -23,7 +23,7 @@ public:
     
     void open(const char* filename);
     void update();
-    
+    int sampleno;
     bool logging;
     
 private:

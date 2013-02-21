@@ -17,6 +17,7 @@ std::fstream Log;
 LoggerClass::LoggerClass()
 {
     logging = false;
+    sampleno = 0;
 }
 
 LoggerClass::LoggerClass(const LoggerClass& orig)
@@ -37,9 +38,11 @@ void LoggerClass::open(const char* filename)
 
 void LoggerClass::update()
 {
+    sampleno++;
     if (logging)
     {
-	Log << Timer.dt * 1000 << ", "
+	Log << sampleno << ", "
+		<< Timer.dt * 1000 << ", "
 		<< AHRS.calibratedData.x << ", "
 		<< AHRS.calibratedData.y << ", "
 		<< AHRS.calibratedData.z << ", "
@@ -58,14 +61,21 @@ void LoggerClass::update()
 		<< AHRS.orientation.psi << ", "
 		<< AHRS.orientation.theta << ", "
 		<< PICInterface.rx.pitch << ", "
+		<< PICInterface.rx.pitchrate << ", "
 		<< PICInterface.rx.roll << ", "
+		<< PICInterface.rx.rollrate << ", "
 		<< PICInterface.rx.throttle << ", "
 		<< PICInterface.rx.yawrate << ", "
 		<< PICInterface.pwmwidths.frontleft << ", "
 		<< PICInterface.pwmwidths.frontright << ", "
 		<< PICInterface.pwmwidths.rearleft << ", "
 		<< PICInterface.pwmwidths.rearright << ", "
-		//		//Add additional logs belowr
+		<< Control.ratePitchPID.output << ", "
+		<< Control.rateRollPID.output << ", "
+		<< Control.rateYawPID.output << ", "
+		<< Control.attitudePitchPID.output << ", "
+		<< Control.attitudeRollPID.output << ", "
+		//		//Add additional logs below
 		<< std::endl;
     }
 }
