@@ -9,6 +9,7 @@
       <itemPath>ConfigFile.h</itemPath>
       <itemPath>Control.h</itemPath>
       <itemPath>DLPF.h</itemPath>
+      <itemPath>ExtendedKalman.h</itemPath>
       <itemPath>HMC5883L.h</itemPath>
       <itemPath>I2CInterface.h</itemPath>
       <itemPath>Kalman.h</itemPath>
@@ -36,6 +37,7 @@
       <itemPath>ConfigFile.cpp</itemPath>
       <itemPath>Control.cpp</itemPath>
       <itemPath>DLPF.cpp</itemPath>
+      <itemPath>ExtendedKalman.cpp</itemPath>
       <itemPath>HMC5883L.cpp</itemPath>
       <itemPath>I2CInterface.cpp</itemPath>
       <itemPath>Kalman.cpp</itemPath>

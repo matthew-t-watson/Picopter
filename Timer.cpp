@@ -91,19 +91,6 @@ void TimerClass::sig_handler_(int signum)
     AHRS.update();
     Control.update();
     LogMan.update();
-    
-    
-//    pthread_t logThread;
-//    pthread_create(&logThread, NULL, thunk<LoggerClass, &LoggerClass::update>, &LogMan); 
-    
-//        std::cout << std::dec << AHRS.rawData_.mag_x << ", " << AHRS.rawData_.mag_y << ", " << AHRS.rawData_.mag_z << std::endl;
-    //    std::cout << PICInterface.pwmwidths.frontright << ", " << PICInterface.pwmwidths.rearright << ", " << PICInterface.pwmwidths.rearleft << ", " << PICInterface.pwmwidths.frontleft << std::endl;
-    //    std::cout << PICInterface.rx.pitch << ", " << PICInterface.rx.roll << ", " << PICInterface.rx.throttle << ", " << PICInterface.rx.yaw << ", " << PICInterface.rx.sw1 << ", " << PICInterface.rx.sw2 << std::endl;
-    //    std::cout << PICInterface.rxWidths.pitch << ", " << PICInterface.rxWidths.roll << ", " << PICInterface.rxWidths.throttle << ", " << PICInterface.rxWidths.yaw << ", " << PICInterface.rxWidths.sw1 << ", " << PICInterface.rxWidths.sw2 << ", " << std::endl;
-    //    std::cout << AHRS.orientation.phi << ", " << AHRS.orientation.psi << ", " << AHRS.orientation.theta << std::endl;
-    //    std::cout << AHRS.rawData_.x << ", " << AHRS.rawData_.y << ", " << AHRS.rawData_.z << ", " << AHRS.rawData_.p << ", " << AHRS.rawData_.q << ", " << AHRS.rawData_.r << std::endl;
-    //    std::cout << AHRS.calibratedData.x << ", " << AHRS.calibratedData.y << ", " << AHRS.calibratedData.z << ", " << AHRS.calibratedData.p << ", " << AHRS.calibratedData.q << ", " << AHRS.calibratedData.r << std::endl;
-
     Timer.compensate_();
     pthread_mutex_unlock(&TimerMutex_);
 }

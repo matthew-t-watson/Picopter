@@ -12,36 +12,41 @@
 #include "Control.h"
 
 LoggerClass LogMan;
-std::fstream Log;
 
-LoggerClass::LoggerClass()
-{
+LoggerClass::LoggerClass() {
     logging = false;
     sampleno = 0;
+    log.str().reserve(50 * 1000 * 1000); //Allocate 50mb
 }
 
-LoggerClass::LoggerClass(const LoggerClass& orig)
-{
+LoggerClass::LoggerClass(const LoggerClass& orig) {
 }
 
-LoggerClass::~LoggerClass()
-{
-    Log.close();
+LoggerClass::~LoggerClass() {
+    logFile.close();
 }
 
-void LoggerClass::open(const char* filename)
-{
-    Log.open(filename, std::fstream::out);
-    Log.rdbuf()->pubsetbuf(0, 0); //No buffer
+void LoggerClass::open(const char* filename) {
+    logFile.open(filename, std::fstream::out);
+    logFile.rdbuf()->pubsetbuf(0, 0); //No buffer
     logging = true;
 }
 
-void LoggerClass::update()
-{
-    sampleno++;
-    if (logging)
-    {
-	Log << sampleno << ", "
+void LoggerClass::flush() {
+    if(timeSinceLastFlush > 1000) {
+	logFile << log.str();
+	log.str(std::string()); //Clear log
+	sync(); //Force dirty page write
+	timeSinceLastFlush = 0;
+    } else {
+	timeSinceLastFlush++;
+    }
+}
+
+void LoggerClass::update() {
+    if(logging) {
+	sampleno++;
+	log << sampleno << ", "
 		<< Timer.dt * 1000 << ", "
 		<< AHRS.calibratedData.x << ", "
 		<< AHRS.calibratedData.y << ", "
@@ -66,6 +71,8 @@ void LoggerClass::update()
 		<< PICInterface.rx.rollrate << ", "
 		<< PICInterface.rx.throttle << ", "
 		<< PICInterface.rx.yawrate << ", "
+		<< PICInterface.rx.sw1 << ", "
+		<< PICInterface.rx.sw2 << ", "
 		<< PICInterface.pwmwidths.frontleft << ", "
 		<< PICInterface.pwmwidths.frontright << ", "
 		<< PICInterface.pwmwidths.rearleft << ", "
@@ -77,5 +84,8 @@ void LoggerClass::update()
 		<< Control.attitudeRollPID.output << ", "
 		//		//Add additional logs below
 		<< std::endl;
+	if(PICInterface.rx.sw1 == false) {
+	    flush();
+	}
     }
 }

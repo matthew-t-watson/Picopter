@@ -10,9 +10,9 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 
-extern std::fstream Log;
 
 class LoggerClass
 {
@@ -23,10 +23,14 @@ public:
     
     void open(const char* filename);
     void update();
+    void flush();
     int sampleno;
     bool logging;
+    std::stringstream log;
     
 private:
+    int timeSinceLastFlush;
+    std::fstream logFile;
 
 };
 extern LoggerClass LogMan;

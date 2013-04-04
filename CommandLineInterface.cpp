@@ -50,10 +50,10 @@ void CLI_class::open() {
 		LogMan.open(stringbuf_[1].c_str());
 		break;
 
-	    case en_writelog:
-		std::cout << "Writing " << stringbuf_[1] << " to log" << std::endl;
-		Log << stringbuf_[1];
-		break;
+		//	    case en_writelog:
+		//		std::cout << "Writing " << stringbuf_[1] << " to log" << std::endl;
+		//		log << stringbuf_[1];
+		//		break;
 
 	    case en_starttimer:
 		Timer.start();
@@ -144,6 +144,10 @@ void CLI_class::open() {
 		AHRS.calibrateAccelerometers();
 		break;
 
+	    case en_startMotorTest:
+		Control.startMotorTest();
+		break;
+
 	    case en_exit:
 		exit(1);
 		break;
@@ -178,5 +182,6 @@ void CLI_class::initialiseMap_() {
     lineMap_["getfilterfreq"] = en_getFilterFreq;
     lineMap_["gdt"] = en_getdt;
     lineMap_["calibaccel"] = en_calibrateAccelerometers;
+    lineMap_["startmotortest"] = en_startMotorTest;
     lineMap_["exit"] = en_exit;
 }

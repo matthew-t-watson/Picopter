@@ -34,6 +34,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/ExtendedKalman.o \
 	${OBJECTDIR}/AHRS.o \
 	${OBJECTDIR}/CommandLineInterface.o \
 	${OBJECTDIR}/HMC5883L.o \
@@ -74,6 +75,11 @@ LDLIBSOPTIONS=-L/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnuea
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/picopter: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/picopter ${OBJECTFILES} ${LDLIBSOPTIONS} 
+
+${OBJECTDIR}/ExtendedKalman.o: nbproject/Makefile-${CND_CONF}.mk ExtendedKalman.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/ExtendedKalman.o ExtendedKalman.cpp
 
 ${OBJECTDIR}/AHRS.o: nbproject/Makefile-${CND_CONF}.mk AHRS.cpp 
 	${MKDIR} -p ${OBJECTDIR}

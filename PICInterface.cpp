@@ -12,7 +12,7 @@
 #define PITCH_RANGE 30.0F
 #define ROLL_RANGE 30.0F
 #define THROTTLE_RANGE 30.0F
-#define YAW_RANGE 90.0F
+#define YAW_RANGE 150.0F
 
 PICInterfaceClass PICInterface;
 

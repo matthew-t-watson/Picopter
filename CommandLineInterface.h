@@ -47,6 +47,7 @@ enum lineString
     en_getFilterFreq,
     en_getdt,
     en_calibrateAccelerometers,
+    en_startMotorTest,
     en_exit
 };
 

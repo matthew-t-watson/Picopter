@@ -53,6 +53,7 @@ public:
     virtual ~ControlClass();
 
     void update();
+    void startMotorTest();
     void setRatePID(float KP, float KI, float KD);
     void getRatePID();
     void setAttitudePID(float KP, float KI, float KD);
@@ -62,6 +63,7 @@ public:
     PIDClass attitudePitchPID, attitudeRollPID;
 
 private:
+    void incrementMotorTest_();
     void updatePWM_(float* throttle, float* pitch, float* roll, float* yaw);
     void evaluateAltitudeControl_();
     void altitudeControl_();
@@ -72,6 +74,8 @@ private:
     s_orientation differentialBuf[differentialFilterSize];
     double targetAltitude_;
     bool altitudeHoldActive_;
+    bool motorTesting_;
+    int motorTestCounter_;
 };
 
 extern ControlClass Control;
