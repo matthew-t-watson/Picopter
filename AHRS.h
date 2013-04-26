@@ -14,7 +14,6 @@
 
 #include "Timer.h"
 #include "MPU6050.h"
-#include "DLPF.h"
 #include "Kalman.h"
 #include "ExtendedKalman.h"
 
@@ -51,7 +50,6 @@ private:
     void quaternionToYPR(QuaternionClass* q, s_euler* orientation);
     double magnitude_(double x, double y, double z);
     void calcAccelAngles_(s_calibratedData* data, s_euler* angles);
-    DLPF xDLPF, yDLPF, zDLPF;
     KalmanClass kalmanPhi_, kalmanPsi_;
     ExtendedKalmanClass EKF;
     
