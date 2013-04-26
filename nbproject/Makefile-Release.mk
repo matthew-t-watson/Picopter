@@ -45,11 +45,11 @@ OBJECTFILES= \
 	${OBJECTDIR}/PICInterface.o \
 	${OBJECTDIR}/Control.o \
 	${OBJECTDIR}/MPU6050.o \
-	${OBJECTDIR}/ConfigFile.o \
 	${OBJECTDIR}/Logger.o \
 	${OBJECTDIR}/DLPF.o \
 	${OBJECTDIR}/MS5611.o \
-	${OBJECTDIR}/Timer.o
+	${OBJECTDIR}/Timer.o \
+	${OBJECTDIR}/Quaternion.o
 
 
 # C Compiler Flags
@@ -131,11 +131,6 @@ ${OBJECTDIR}/MPU6050.o: nbproject/Makefile-${CND_CONF}.mk MPU6050.cpp
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/MPU6050.o MPU6050.cpp
 
-${OBJECTDIR}/ConfigFile.o: nbproject/Makefile-${CND_CONF}.mk ConfigFile.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/ConfigFile.o ConfigFile.cpp
-
 ${OBJECTDIR}/Logger.o: nbproject/Makefile-${CND_CONF}.mk Logger.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
@@ -155,6 +150,11 @@ ${OBJECTDIR}/Timer.o: nbproject/Makefile-${CND_CONF}.mk Timer.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/Timer.o Timer.cpp
+
+${OBJECTDIR}/Quaternion.o: nbproject/Makefile-${CND_CONF}.mk Quaternion.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -I/opt/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/Quaternion.o Quaternion.cpp
 
 # Subprojects
 .build-subprojects:

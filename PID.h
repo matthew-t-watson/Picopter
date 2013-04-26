@@ -14,7 +14,7 @@ public:
     PIDClass();
     PIDClass(const PIDClass& orig);
     virtual ~PIDClass();
-    void initialise(float KP, float KI, float KD, float ILIM, float LIM);
+    void initialise(float KP, float KI, float KD, float ILIM, float LIM, int DFILLEN);
     void calculate(double* position, float* setpoint, float* dt);
     void calculate(double* position, double* setpoint, float* dt);
     void setPID(float KP, float KI, float KD);
@@ -22,12 +22,14 @@ public:
     float output;
 private:
     void constrain_(float* value, float range);
-    float p, i, d;
+    float proportional, integral, derivative;
+    float dHist[32];
     float kp;
     float ki;
     float kd;
     float ilim;
     float lim;
+    int dFilLen;
     float error;
     float prevError;    
 };

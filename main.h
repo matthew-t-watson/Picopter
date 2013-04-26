@@ -14,7 +14,6 @@
 #include "AHRS.h"
 #include "CommandLineInterface.h"
 #include "Timer.h"
-#include "ConfigFile.h"
 
 
 #include <iostream>

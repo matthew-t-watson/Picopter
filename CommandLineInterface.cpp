@@ -59,10 +59,6 @@ void CLI_class::open() {
 		Timer.start();
 		break;
 
-	    case en_readconfig:
-		std::cout << Config.getValueOfKey<std::string > (stringbuf_[1]) << std::endl;
-		break;
-
 	    case en_dumpsensors:
 		if(!Timer.started) {
 		    AHRS.update();
@@ -124,10 +120,6 @@ void CLI_class::open() {
 	    case en_getYawPID:
 		break;
 
-	    case en_zeroGyros:
-		AHRS.zeroGyros();
-		break;
-
 	    case en_setFilterFreq:
 		AHRS.filterTimeConstant = atof(stringbuf_[1].c_str());
 		break;
@@ -139,11 +131,7 @@ void CLI_class::open() {
 	    case en_getdt:
 		std::cout << Timer.dt << std::endl;
 		break;
-
-	    case en_calibrateAccelerometers:
-		AHRS.calibrateAccelerometers();
-		break;
-
+		
 	    case en_startMotorTest:
 		Control.startMotorTest();
 		break;
@@ -164,7 +152,6 @@ void CLI_class::initialiseMap_() {
     lineMap_["openlog"] = en_openlog;
     lineMap_["writelog"] = en_writelog;
     lineMap_["starttimer"] = en_starttimer;
-    lineMap_["readconfig"] = en_readconfig;
     lineMap_["dr"] = en_dumprawsensors;
     lineMap_["ds"] = en_dumpsensors;
     lineMap_["drm"] = en_dumprawmag;
@@ -177,11 +164,9 @@ void CLI_class::initialiseMap_() {
     lineMap_["gypid"] = en_getYawPID;
     lineMap_["sapid"] = en_setAttitudePID;
     lineMap_["gapid"] = en_getAttitudePID;
-    lineMap_["zerogyros"] = en_zeroGyros;
     lineMap_["setfilterfreq"] = en_setFilterFreq;
     lineMap_["getfilterfreq"] = en_getFilterFreq;
     lineMap_["gdt"] = en_getdt;
-    lineMap_["calibaccel"] = en_calibrateAccelerometers;
     lineMap_["startmotortest"] = en_startMotorTest;
     lineMap_["exit"] = en_exit;
 }

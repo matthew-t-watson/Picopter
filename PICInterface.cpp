@@ -9,10 +9,9 @@
 
 #define RX_MAX 20000
 #define RX_MIN 10000
-#define PITCH_RANGE 30.0F
-#define ROLL_RANGE 30.0F
-#define THROTTLE_RANGE 30.0F
-#define YAW_RANGE 150.0F
+#define PITCH_RANGE 70.0F
+#define ROLL_RANGE 70.0F
+#define YAW_RANGE 50.0F
 
 PICInterfaceClass PICInterface;
 

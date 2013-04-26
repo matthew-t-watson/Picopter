@@ -10,9 +10,9 @@
 
 struct s_euler
 {
-    double phi;
-    double psi;
-    double theta;
+    double pitch;
+    double roll;
+    double yaw;
 };
 
 #endif	/* STRUCT_EULER_H */

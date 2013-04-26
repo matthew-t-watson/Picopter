@@ -6,7 +6,6 @@
                    projectFiles="true">
       <itemPath>AHRS.h</itemPath>
       <itemPath>CommandLineInterface.h</itemPath>
-      <itemPath>ConfigFile.h</itemPath>
       <itemPath>Control.h</itemPath>
       <itemPath>DLPF.h</itemPath>
       <itemPath>ExtendedKalman.h</itemPath>
@@ -19,6 +18,7 @@
       <itemPath>MS5611.h</itemPath>
       <itemPath>PICInterface.h</itemPath>
       <itemPath>PID.h</itemPath>
+      <itemPath>Quaternion.h</itemPath>
       <itemPath>Timer.h</itemPath>
       <itemPath>main.h</itemPath>
       <itemPath>struct_calibratedData.h</itemPath>
@@ -34,7 +34,6 @@
                    projectFiles="true">
       <itemPath>AHRS.cpp</itemPath>
       <itemPath>CommandLineInterface.cpp</itemPath>
-      <itemPath>ConfigFile.cpp</itemPath>
       <itemPath>Control.cpp</itemPath>
       <itemPath>DLPF.cpp</itemPath>
       <itemPath>ExtendedKalman.cpp</itemPath>
@@ -46,6 +45,7 @@
       <itemPath>MS5611.cpp</itemPath>
       <itemPath>PICInterface.cpp</itemPath>
       <itemPath>PID.cpp</itemPath>
+      <itemPath>Quaternion.cpp</itemPath>
       <itemPath>Timer.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>

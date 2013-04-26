@@ -60,11 +60,11 @@ void LoggerClass::update() {
 		<< AHRS.calibratedData.magz << ", "
 		<< AHRS.calibratedData.pressure << ", "
 		<< AHRS.calibratedData.altitude << ", "
-		<< AHRS.accelAngles.phi << ", "
-		<< AHRS.accelAngles.psi << ", "
-		<< AHRS.orientation.phi << ", "
-		<< AHRS.orientation.psi << ", "
-		<< AHRS.orientation.theta << ", "
+		<< AHRS.accelAngles.pitch << ", "
+		<< AHRS.accelAngles.roll << ", "
+		<< AHRS.orientation.pitch << ", "
+		<< AHRS.orientation.roll << ", "
+		<< AHRS.orientation.yaw << ", "
 		<< PICInterface.rx.pitch << ", "
 		<< PICInterface.rx.pitchrate << ", "
 		<< PICInterface.rx.roll << ", "
@@ -82,6 +82,10 @@ void LoggerClass::update() {
 		<< Control.rateYawPID.output << ", "
 		<< Control.attitudePitchPID.output << ", "
 		<< Control.attitudeRollPID.output << ", "
+		<< AHRS.quaternion.w << ", "
+		<< AHRS.quaternion.x << ", "
+		<< AHRS.quaternion.y << ", "
+		<< AHRS.quaternion.z
 		//		//Add additional logs below
 		<< std::endl;
 	if(PICInterface.rx.sw1 == false) {

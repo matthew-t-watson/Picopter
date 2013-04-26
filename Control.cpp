@@ -15,11 +15,11 @@ const uint16_t MOTOR_MIN = 9000;
 ControlClass Control;
 
 ControlClass::ControlClass() {
-    ratePitchPID.initialise(16, 0, 0, 1, 1500);
-    rateRollPID.initialise(16, 0, 0, 1, 1500);
-    rateYawPID.initialise(40, 0, 0, 1, 1000);
-    attitudePitchPID.initialise(6, 0.1, 0.15, 0.1, 1000);
-    attitudeRollPID.initialise(6, 0.1, 0.15, 0.1, 1000);
+    ratePitchPID.initialise(16, 0, 0, 1, 1500, 4);
+    rateRollPID.initialise(16, 0, 0, 1, 1500, 4);
+    rateYawPID.initialise(40, 0, 0, 1, 1000, 4);
+    attitudePitchPID.initialise(5, 0.5, 0.15, 0.1, 1000, 16);
+    attitudeRollPID.initialise(5, 0.5, 0.15, 0.1, 1000, 16);
 
     altitudeHoldActive_ = false;
     motorTesting_ = false;
@@ -137,8 +137,8 @@ void ControlClass::rateControl_(float* pitchrate, float* rollrate, float* yawrat
 }
 
 void ControlClass::attitudeControl_(float* targetPitch, float* targetRoll, float* targetYawRate) {
-    attitudePitchPID.calculate(&AHRS.orientation.phi, targetPitch, &Timer.dt);
-    attitudeRollPID.calculate(&AHRS.orientation.psi, targetRoll, &Timer.dt);
+    attitudePitchPID.calculate(&AHRS.orientation.pitch, targetPitch, &Timer.dt);
+    attitudeRollPID.calculate(&AHRS.orientation.roll, targetRoll, &Timer.dt);
     rateControl_(&attitudePitchPID.output, &attitudeRollPID.output, targetYawRate);
 }
 

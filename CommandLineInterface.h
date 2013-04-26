@@ -19,7 +19,6 @@
 
 #include "Logger.h"
 #include "Timer.h"
-#include "ConfigFile.h"
 #include "Control.h"
 
 
@@ -29,7 +28,6 @@ enum lineString
     en_openlog,
     en_writelog,
     en_starttimer,
-    en_readconfig,
     en_dumpsensors,
     en_dumprawsensors,
     en_dumprawmag,
@@ -42,11 +40,9 @@ enum lineString
     en_getAttitudePID,
     en_setYawPID,
     en_getYawPID,
-    en_zeroGyros,
     en_setFilterFreq,
     en_getFilterFreq,
     en_getdt,
-    en_calibrateAccelerometers,
     en_startMotorTest,
     en_exit
 };
