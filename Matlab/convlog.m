@@ -36,9 +36,14 @@ pidpitch = log(:,35);
 pidroll = log(:,36);
 %quat = log(:,37:40);
 
-pint = cumtrapz(p.*dt) + accelphi(1);
-qint = cumtrapz(q.*dt) + accelpsi(1);
+accelpitch = (180/pi) * atan2(y, sqrt(x.^2 + z.^2));
+accelroll = (180/pi) * atan2(x, sqrt(y.^2 + z.^2));
+
+pint = cumtrapz(p.*dt) + accelpitch(1);
+qint = cumtrapz(q.*dt) + accelroll(1);
 rint = cumtrapz(r.*dt);
+
+
 
 save_to_base(1);
 

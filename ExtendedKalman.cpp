@@ -22,7 +22,7 @@ ExtendedKalmanClass::ExtendedKalmanClass() {
     
     I = I.Identity();
     P = P.Identity();
-    P *= 1000;
+    P *= 10000;
     
     Q(0,0) = 0;
     Q(1,1) = 0;
