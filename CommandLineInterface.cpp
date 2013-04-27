@@ -6,7 +6,6 @@
  */
 
 #include "CommandLineInterface.h"
-#include "PICInterface.h"
 
 CLI_class CLI;
 pthread_mutex_t CLImutex;

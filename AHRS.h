@@ -9,8 +9,6 @@
 #define	AHRS_H
 
 #include <iostream>
-#include <stdint.h>
-#include <math.h>
 
 #include "Timer.h"
 #include "MPU6050.h"
@@ -22,11 +20,7 @@
 #include "struct_euler.h"
 #include "Quaternion.h"
 
-#define pi 3.14159265358979
 const double g = 9.81816;
-
-
-
 
 class AHRSClass
 {
@@ -47,7 +41,7 @@ private:
     void fuse_();
     void quaternionToYPR_(QuaternionClass* q, s_euler* orientation);
     double magnitude_(double x, double y, double z);
-    KalmanClass kalmanPhi_, kalmanPsi_;
+//    KalmanClass kalmanPhi_, kalmanPsi_;
     ExtendedKalmanClass EKF;
 };
 

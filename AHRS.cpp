@@ -8,7 +8,6 @@
 #include "AHRS.h"
 #include "HMC5883L.h"
 #include "MS5611.h"
-#include "unistd.h"
 
 //Values calculated from matlab script MgnCalibration
 const double accelZeroX = 0.2238;
@@ -109,7 +108,7 @@ void AHRSClass::calibrateData_() {
     //End Altitude LPF
 }
 
-inline void AHRSClass::temperatureCompensate_() {
+void AHRSClass::temperatureCompensate_() {
     static double tempPow1 = calibratedData.temp;
     static double tempPow2 = pow(calibratedData.temp, 2);
     static double tempPow3 = pow(calibratedData.temp, 3);

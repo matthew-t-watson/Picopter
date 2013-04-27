@@ -29,11 +29,11 @@ KalmanClass::~KalmanClass()
 {
 }
 
-void KalmanClass::predict(double* u, double* x1, float* dt)
+void KalmanClass::predict(double* u, double* x, float* dt)
 {
     //Predicted state estimate
     //x = F.x + B.u
-    *x1 += (*u - bias_) * *dt;
+    *x += (*u - bias_) * *dt;
 
     //Predicted estimate covariance
     //P = F.P.F' + Q
@@ -43,11 +43,11 @@ void KalmanClass::predict(double* u, double* x1, float* dt)
     P_[1][1] += Q_bias_;
 }
 
-void KalmanClass::update(double* z, double* x1)
+void KalmanClass::update(double* z, double* x)
 {
     //Innovation
     //y = z - H.x
-    y_ = *z - *x1;
+    y_ = *z - *x;
 
     //Innovation covariance
     //S = H.P.H' + R
@@ -60,7 +60,7 @@ void KalmanClass::update(double* z, double* x1)
 
     //Updated state estimate
     //x = x + K.y
-    *x1 += K_[0] * y_;
+    *x += K_[0] * y_;
     bias_ += K_[1] * y_;
 
     //Updated estimate covariance

@@ -9,6 +9,7 @@
 #define	HMC5883L_H
 
 #include "struct_rawData.h"
+#include "I2CInterface.h"
 
 const uint8_t HMC5883L_ADDRESS = 0x1E;
 

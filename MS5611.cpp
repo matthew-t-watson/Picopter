@@ -6,7 +6,6 @@
  */
 
 #include "MS5611.h"
-#include "I2CInterface.h"
 
 MS5611Class MS5611;
 

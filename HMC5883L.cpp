@@ -6,7 +6,6 @@
  */
 
 #include "HMC5883L.h"
-#include "I2CInterface.h"
 
 HMC5883LClass HMC5883L;
 

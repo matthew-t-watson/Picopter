@@ -6,8 +6,6 @@
  */
 
 #include "Timer.h"
-#include "PICInterface.h"
-#include "Control.h"
 
 #define PERIOD 2500000
 

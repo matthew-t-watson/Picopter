@@ -8,18 +8,13 @@
 #ifndef COMMANDLINEINTERFACE_H
 #define	COMMANDLINEINTERFACE_H
 
-#include <cstdlib>
 #include <iostream>
 #include <map>
-#include <pthread.h>
-#include <string>
-#include <stdio.h>
-#include <sys/types.h>
-#include <sstream>
 
 #include "Logger.h"
 #include "Timer.h"
 #include "Control.h"
+#include "PICInterface.h"
 
 
 enum lineString

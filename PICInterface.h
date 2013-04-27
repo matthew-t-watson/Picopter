@@ -9,7 +9,6 @@
 #define	PICINTERFACE_H
 
 #include <iostream>
-#include <stdint.h>
 
 #include "I2CInterface.h"
 

@@ -15,8 +15,8 @@ public:
     KalmanClass(const KalmanClass& orig);
     virtual ~KalmanClass();
     
-    void predict(double* u, double* x1, float* dt);
-    void update(double* z, double* x1);
+    void predict(double* u, double* x, float* dt);
+    void update(double* z, double* x);
     
 private:
     double bias_;

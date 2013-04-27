@@ -8,7 +8,8 @@
 #ifndef MS5611_H
 #define	MS5611_H
 
-#include <stdint.h>
+#include <iostream>
+#include "I2CInterface.h"
 
 const uint8_t MS5611_ADDRESS = 0x77;
 const uint8_t C0_ADDRESS = 0xA0;

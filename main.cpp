@@ -9,25 +9,13 @@
 #include "main.h"
 #include "PICInterface.h"
 #include "HMC5883L.h"
-/*
- *
- */
-template <class T, void(T::*member_function)()>
-void* thunk(void* p)
-{
-    (static_cast<T*> (p)->*member_function)();
-    return 0;
-}
 
 int main(int argc, char** argv)
 {
     MPU6050.initialise();
-    HMC5883L.initialise();
-//    pthread_t CLIthread;
-//    pthread_create(&CLIthread, NULL, thunk<CLI_class, &CLI_class::open>, &CLI);    
+    HMC5883L.initialise(); 
     Timer.start();
-    CLI.open();
-    
+    CLI.open();    
     while (1)
     {
         sleep(1000);
