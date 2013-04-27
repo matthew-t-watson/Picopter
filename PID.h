@@ -8,15 +8,16 @@
 #ifndef PID_H
 #define	PID_H
 
+#include <cstddef>
+
 class PIDClass
 {
 public:
     PIDClass();
     PIDClass(const PIDClass& orig);
     virtual ~PIDClass();
-    void initialise(float KP, float KI, float KD, float ILIM, float LIM, int DFILLEN);
+    void initialise(float KP, float KI, float KD, float ILIM, float LIM, int DFILLEN, double* ALT_DERIV_SOURCE = NULL);
     void calculate(double* position, float* setpoint, float* dt);
-    void calculate(double* position, double* setpoint, float* dt);
     void setPID(float KP, float KI, float KD);
     void getPID();
     float output;
@@ -30,8 +31,10 @@ private:
     float ilim;
     float lim;
     int dFilLen;
+    int dFilK;
     float error;
-    float prevError;    
+    float prevError;
+    double* altDerivativeSource;
 };
 
 #endif	/* PID_H */

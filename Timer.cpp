@@ -9,7 +9,7 @@
 #include "PICInterface.h"
 #include "Control.h"
 
-#define PERIOD 5000000
+#define PERIOD 2500000
 
 TimerClass Timer;
 pthread_mutex_t TimerMutex_;

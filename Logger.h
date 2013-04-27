@@ -23,7 +23,7 @@ public:
     
     void open(const char* filename);
     void update();
-    void flush();
+    void doWeNeedToFlush();
     int sampleno;
     bool logging;
     std::stringstream log;

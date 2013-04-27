@@ -15,11 +15,11 @@ const uint16_t MOTOR_MIN = 9000;
 ControlClass Control;
 
 ControlClass::ControlClass() {
-    ratePitchPID.initialise(16, 0, 0, 1, 1500, 4);
-    rateRollPID.initialise(16, 0, 0, 1, 1500, 4);
-    rateYawPID.initialise(40, 0, 0, 1, 1000, 4);
-    attitudePitchPID.initialise(5, 0.5, 0.15, 0.1, 1000, 16);
-    attitudeRollPID.initialise(5, 0.5, 0.15, 0.1, 1000, 16);
+    ratePitchPID.initialise(16, 20, 0, 5, 1500, 1);
+    rateRollPID.initialise(16, 20, 0, 5, 1500, 1);
+    rateYawPID.initialise(40, 20, 0, 5, 1500, 1);
+    attitudePitchPID.initialise(4, 1, 0.02, 1, 1000, 16, &AHRS.calibratedData.p);
+    attitudeRollPID.initialise(4, 1, 0.02, 1, 1000, 16, &AHRS.calibratedData.q);
 
     altitudeHoldActive_ = false;
     motorTesting_ = false;
@@ -34,9 +34,9 @@ ControlClass::~ControlClass() {
 void ControlClass::update() {
     if(motorTesting_ == false) {
 	if(PICInterface.rx.sw2 == false) {//in rate mode
-	    rateControl_(&PICInterface.rx.pitchrate, &PICInterface.rx.rollrate, &PICInterface.rx.yawrate);
+	    rateControl_(&PICInterface.rx.pitchRateDem, &PICInterface.rx.rollRateDem, &PICInterface.rx.yawRateDem);
 	} else if(PICInterface.rx.sw2 == true) { //in attitude mode
-	    attitudeControl_(&PICInterface.rx.pitch, &PICInterface.rx.roll, &PICInterface.rx.yawrate);
+	    attitudeControl_(&PICInterface.rx.pitchDem, &PICInterface.rx.rollDem, &PICInterface.rx.yawRateDem);
 	}
     } else {
 	incrementMotorTest_();
@@ -133,7 +133,7 @@ void ControlClass::rateControl_(float* pitchrate, float* rollrate, float* yawrat
     ratePitchPID.calculate(&AHRS.calibratedData.p, pitchrate, &Timer.dt);
     rateRollPID.calculate(&AHRS.calibratedData.q, rollrate, &Timer.dt);
     rateYawPID.calculate(&AHRS.calibratedData.r, yawrate, &Timer.dt);
-    updatePWM_(&PICInterface.rx.throttle, &ratePitchPID.output, &rateRollPID.output, &rateYawPID.output);
+    updatePWM_(&PICInterface.rx.throttleDem, &ratePitchPID.output, &rateRollPID.output, &rateYawPID.output);
 }
 
 void ControlClass::attitudeControl_(float* targetPitch, float* targetRoll, float* targetYawRate) {

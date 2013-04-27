@@ -54,8 +54,6 @@ void AHRSClass::update() {
 }
 
 
-//Collect data from all the sensors. Currently only the MPU is collected.
-
 void AHRSClass::getSensors_() {
     MPU6050.getSensors(&rawData_);
     HMC5883L.getField(&rawData_);

@@ -56,7 +56,7 @@ bool HMC5883LClass::setMode_(uint8_t value)
 
 bool HMC5883LClass::checkCommunication_()
 {
-    uint8_t buf[3] = {0};
+    uint8_t buf[3];
     I2CInterface.readRegister(HMC5883L_ADDRESS, HMC5883L_RA_ID_A, buf, 3);
     if (buf[0] != 'H' | buf[1] != '4' | buf[2] != '3')
     {

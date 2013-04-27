@@ -16,7 +16,7 @@ LoggerClass LogMan;
 LoggerClass::LoggerClass() {
     logging = false;
     sampleno = 0;
-    log.str().reserve(50 * 1000 * 1000); //Allocate 50mb
+    log.str().reserve(100e6); //Allocate 100mb
 }
 
 LoggerClass::LoggerClass(const LoggerClass& orig) {
@@ -32,7 +32,7 @@ void LoggerClass::open(const char* filename) {
     logging = true;
 }
 
-void LoggerClass::flush() {
+void LoggerClass::doWeNeedToFlush() {
     if(timeSinceLastFlush > 1000) {
 	logFile << log.str();
 	log.str(std::string()); //Clear log
@@ -65,12 +65,12 @@ void LoggerClass::update() {
 		<< AHRS.orientation.pitch << ", "
 		<< AHRS.orientation.roll << ", "
 		<< AHRS.orientation.yaw << ", "
-		<< PICInterface.rx.pitch << ", "
-		<< PICInterface.rx.pitchrate << ", "
-		<< PICInterface.rx.roll << ", "
-		<< PICInterface.rx.rollrate << ", "
-		<< PICInterface.rx.throttle << ", "
-		<< PICInterface.rx.yawrate << ", "
+		<< PICInterface.rx.pitchDem << ", "
+		<< PICInterface.rx.pitchRateDem << ", "
+		<< PICInterface.rx.rollDem << ", "
+		<< PICInterface.rx.rollRateDem << ", "
+		<< PICInterface.rx.throttleDem << ", "
+		<< PICInterface.rx.yawRateDem << ", "
 		<< PICInterface.rx.sw1 << ", "
 		<< PICInterface.rx.sw2 << ", "
 		<< PICInterface.pwmwidths.frontleft << ", "
@@ -89,7 +89,7 @@ void LoggerClass::update() {
 		//		//Add additional logs below
 		<< std::endl;
 	if(PICInterface.rx.sw1 == false) {
-	    flush();
+	    doWeNeedToFlush();
 	}
     }
 }

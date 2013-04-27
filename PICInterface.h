@@ -54,12 +54,12 @@ struct s_rxWidths
 
 struct s_rxcalibrated
 {
-    float pitch;
-    float roll;
-    float throttle;
-    float yawrate;
-    float pitchrate;
-    float rollrate;
+    float pitchDem;
+    float rollDem;
+    float throttleDem;
+    float yawRateDem;
+    float pitchRateDem;
+    float rollRateDem;
     bool sw1;
     bool sw2;
 };

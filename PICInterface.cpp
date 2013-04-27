@@ -11,7 +11,9 @@
 #define RX_MIN 10000
 #define PITCH_RANGE 70.0F
 #define ROLL_RANGE 70.0F
-#define YAW_RANGE 50.0F
+#define PITCH_RATE_RANGE 200.0F
+#define ROLL_RATE_RANGE 200.0F
+#define YAW_RATE_RANGE 100.0F
 
 PICInterfaceClass PICInterface;
 
@@ -66,17 +68,17 @@ void PICInterfaceClass::getRX() {
 }
 
 inline void PICInterfaceClass::calibrateRX_() {
-    rx.pitch = PITCH_RANGE * (static_cast<float> (rxWidths.pitch - ((RX_MAX - RX_MIN) / 2) - RX_MIN) / (RX_MAX - RX_MIN));
-    rx.roll = ROLL_RANGE * (static_cast<float> (rxWidths.roll - ((RX_MAX - RX_MIN) / 2) - RX_MIN) / (RX_MAX - RX_MIN));
-    rx.yawrate = YAW_RANGE * (static_cast<float> (rxWidths.yaw - ((RX_MAX - RX_MIN) / 2) - RX_MIN) / (RX_MAX - RX_MIN));
-    rx.throttle = static_cast<float> (rxWidths.throttle - RX_MIN) / (RX_MAX - RX_MIN);
+    rx.pitchDem = PITCH_RANGE * (static_cast<float> (rxWidths.pitch - ((RX_MAX - RX_MIN) / 2) - RX_MIN) / (RX_MAX - RX_MIN));
+    rx.rollDem = ROLL_RANGE * (static_cast<float> (rxWidths.roll - ((RX_MAX - RX_MIN) / 2) - RX_MIN) / (RX_MAX - RX_MIN));
+    rx.yawRateDem = YAW_RATE_RANGE * (static_cast<float> (rxWidths.yaw - ((RX_MAX - RX_MIN) / 2) - RX_MIN) / (RX_MAX - RX_MIN));
+    rx.throttleDem = static_cast<float> (rxWidths.throttle - RX_MIN) / (RX_MAX - RX_MIN);
     rx.sw1 = (rxWidths.sw1 > 15000);
     rx.sw2 = (rxWidths.sw2 > 15000);
-    rx.pitchrate = rx.pitch*5;
-    rx.rollrate = rx.roll*5;
+    rx.pitchRateDem = PITCH_RATE_RANGE * (static_cast<float> (rxWidths.pitch - ((RX_MAX - RX_MIN) / 2) - RX_MIN) / (RX_MAX - RX_MIN));;
+    rx.rollRateDem = ROLL_RATE_RANGE * (static_cast<float> (rxWidths.roll - ((RX_MAX - RX_MIN) / 2) - RX_MIN) / (RX_MAX - RX_MIN));
     
 
-    rx.yawrate = -rx.yawrate;
+    rx.yawRateDem = -rx.yawRateDem;
 }
 
 inline uint16_t PICInterfaceClass::make16_(uint8_t H, uint8_t L) {
