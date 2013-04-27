@@ -39,21 +39,16 @@ public:
     s_calibratedData calibratedData;
     s_rawData rawData_;
     s_euler orientation;
-    s_euler accelAngles;
     QuaternionClass quaternion;
-    double filterTimeConstant;
 private:
     void getSensors_();
     void calibrateData_();
     void temperatureCompensate_();
     void fuse_();
-    void quaternionToYPR(QuaternionClass* q, s_euler* orientation);
+    void quaternionToYPR_(QuaternionClass* q, s_euler* orientation);
     double magnitude_(double x, double y, double z);
-    void calcAccelAngles_(s_calibratedData* data, s_euler* angles);
     KalmanClass kalmanPhi_, kalmanPsi_;
     ExtendedKalmanClass EKF;
-    
-    s_calibratedData zeroPoints_;
 };
 
 extern AHRSClass AHRS;

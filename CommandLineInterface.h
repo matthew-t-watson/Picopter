@@ -26,11 +26,11 @@ enum lineString
 {
     en_stringNotDefined,
     en_openlog,
-    en_writelog,
-    en_starttimer,
+    en_dumporientation,
     en_dumpsensors,
     en_dumprawsensors,
     en_dumprawmag,
+    en_dumprawrx,
     en_dumprx,
     en_resetmpu,
     en_readregister,
@@ -40,8 +40,6 @@ enum lineString
     en_getAttitudePID,
     en_setYawPID,
     en_getYawPID,
-    en_setFilterFreq,
-    en_getFilterFreq,
     en_getdt,
     en_startMotorTest,
     en_exit

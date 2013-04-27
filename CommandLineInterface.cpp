@@ -49,14 +49,9 @@ void CLI_class::open() {
 		std::cout << "Opening log at " << stringbuf_[1] << std::endl;
 		LogMan.open(stringbuf_[1].c_str());
 		break;
-
-		//	    case en_writelog:
-		//		std::cout << "Writing " << stringbuf_[1] << " to log" << std::endl;
-		//		log << stringbuf_[1];
-		//		break;
-
-	    case en_starttimer:
-		Timer.start();
+		
+	    case en_dumporientation:
+		std::cout << "Pitch " << AHRS.orientation.pitch << ", roll " << AHRS.orientation.roll << ", yaw" << AHRS.orientation.yaw << std::endl;
 		break;
 
 	    case en_dumpsensors:
@@ -80,11 +75,23 @@ void CLI_class::open() {
 		std::cout << AHRS.rawData_.mag_x << ", " << AHRS.rawData_.mag_y << ", " << AHRS.rawData_.mag_z << std::endl;
 		break;
 
-	    case en_dumprx:
+	    case en_dumprawrx:
 		if(!Timer.started) {
 		    PICInterface.getRX();
 		}
 		std::cout << std::dec << PICInterface.rxWidths.pitch << ", " << PICInterface.rxWidths.roll << ", " << PICInterface.rxWidths.throttle << ", " << PICInterface.rxWidths.yaw << ", " << PICInterface.rxWidths.sw1 << ", " << PICInterface.rxWidths.sw2 << ", " << std::endl;
+		break;
+
+	    case en_dumprx:
+		if(!Timer.started) {
+		    PICInterface.getRX();
+		}
+		if(PICInterface.rx.sw2 == false){ //Rate mode
+		    std::cout << std::dec << "Pitch rate demand " << PICInterface.rx.pitchRateDem << ", roll rate demand " << PICInterface.rx.rollRateDem << ", throttle " << PICInterface.rx.throttleDem << ", yaw rate demand " << PICInterface.rx.yawRateDem << std::endl;
+		}
+		else{ //Attitude mode
+		    std::cout << std::dec << "Pitch demand " << PICInterface.rx.pitchDem << ", roll demand " << PICInterface.rx.rollDem << ", throttle " << PICInterface.rx.throttleDem << ", yaw rate demand " << PICInterface.rx.yawRateDem << std::endl;
+		}
 		break;
 
 	    case en_resetmpu:
@@ -120,18 +127,10 @@ void CLI_class::open() {
 	    case en_getYawPID:
 		break;
 
-	    case en_setFilterFreq:
-		AHRS.filterTimeConstant = atof(stringbuf_[1].c_str());
-		break;
-
-	    case en_getFilterFreq:
-		std::cout << AHRS.filterTimeConstant << std::endl;
-		break;
-
 	    case en_getdt:
 		std::cout << Timer.dt << std::endl;
 		break;
-		
+
 	    case en_startMotorTest:
 		Control.startMotorTest();
 		break;
@@ -150,11 +149,11 @@ void CLI_class::open() {
 void CLI_class::initialiseMap_() {
     lineMap_[""] = en_stringNotDefined;
     lineMap_["openlog"] = en_openlog;
-    lineMap_["writelog"] = en_writelog;
-    lineMap_["starttimer"] = en_starttimer;
+    lineMap_["do"] = en_dumporientation;
     lineMap_["dr"] = en_dumprawsensors;
     lineMap_["ds"] = en_dumpsensors;
     lineMap_["drm"] = en_dumprawmag;
+    lineMap_["drrx"] = en_dumprawrx;
     lineMap_["drx"] = en_dumprx;
     lineMap_["resetmpu"] = en_resetmpu;
     lineMap_["rr"] = en_readregister;
@@ -164,8 +163,6 @@ void CLI_class::initialiseMap_() {
     lineMap_["gypid"] = en_getYawPID;
     lineMap_["sapid"] = en_setAttitudePID;
     lineMap_["gapid"] = en_getAttitudePID;
-    lineMap_["setfilterfreq"] = en_setFilterFreq;
-    lineMap_["getfilterfreq"] = en_getFilterFreq;
     lineMap_["gdt"] = en_getdt;
     lineMap_["startmotortest"] = en_startMotorTest;
     lineMap_["exit"] = en_exit;

@@ -38,7 +38,7 @@ Model {
       Name		      ""
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.4"
+    ComputedModelVersion    "1.7"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -58,9 +58,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Matt"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Apr 09 16:02:58 2013"
-  RTWModifiedTimeStamp	  287423977
-  ModelVersionFormat	  "1.%<AutoIncrement:4>"
+  LastModifiedDate	  "Sat Apr 27 21:39:57 2013"
+  RTWModifiedTimeStamp	  288999362
+  ModelVersionFormat	  "1.%<AutoIncrement:7>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -97,8 +97,7 @@ Model {
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "PID_diagram"
-    signals_		    []
-    overrideMode_	    [0U]
+    overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
       Dimension		      1
@@ -761,6 +760,21 @@ Model {
       InitialOutput	      "[]"
     }
     Block {
+      BlockType		      Saturate
+      UpperLimitSource	      "Dialog"
+      UpperLimit	      "0.5"
+      LowerLimitSource	      "Dialog"
+      LowerLimit	      "-0.5"
+      LinearizeAsGain	      on
+      ZeroCross		      on
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as input"
+      LockScale		      off
+      RndMeth		      "Floor"
+    }
+    Block {
       BlockType		      SubSystem
       ShowPortLabels	      "FromPortIcon"
       Permissions	      "ReadWrite"
@@ -801,7 +815,7 @@ Model {
   }
   System {
     Name		    "PID_diagram"
-    Location		    [727, 202, 1792, 809]
+    Location		    [534, 207, 1599, 814]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -815,12 +829,12 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "18"
+    SIDHighWatermark	    "25"
     Block {
       BlockType		      Inport
       Name		      "Desired Angle"
       SID		      "2"
-      Position		      [165, 133, 195, 147]
+      Position		      [160, 133, 190, 147]
       ShowName		      off
       IconDisplay	      "Signal name"
     }
@@ -828,15 +842,15 @@ Model {
       BlockType		      Inport
       Name		      "Accelerations"
       SID		      "18"
-      Position		      [165, 253, 195, 267]
+      Position		      [160, 198, 190, 212]
       Port		      "2"
       IconDisplay	      "Port number"
     }
     Block {
       BlockType		      Inport
-      Name		      "Gyroscope angular rate"
+      Name		      "Gyroscope\nangular rate"
       SID		      "17"
-      Position		      [165, 318, 195, 332]
+      Position		      [160, 268, 190, 282]
       Port		      "3"
       IconDisplay	      "Port number"
     }
@@ -844,7 +858,7 @@ Model {
       BlockType		      Gain
       Name		      "1"
       SID		      "11"
-      Position		      [585, 125, 615, 155]
+      Position		      [680, 95, 710, 125]
       ShowName		      off
       Gain		      "P"
       ParamDataTypeStr	      "Inherit: Inherit via internal rule"
@@ -855,7 +869,7 @@ Model {
       BlockType		      Gain
       Name		      "D"
       SID		      "8"
-      Position		      [365, 185, 395, 215]
+      Position		      [405, 260, 435, 290]
       ShowName		      off
       Gain		      "D"
       ParamDataTypeStr	      "Inherit: Inherit via internal rule"
@@ -866,14 +880,14 @@ Model {
       BlockType		      Derivative
       Name		      "Derivative"
       SID		      "4"
-      Position		      [305, 185, 335, 215]
+      Position		      [355, 260, 385, 290]
     }
     Block {
       BlockType		      SubSystem
       Name		      "EKF"
       SID		      "13"
       Ports		      [2, 1]
-      Position		      [235, 264, 335, 306]
+      Position		      [235, 209, 335, 251]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -884,7 +898,7 @@ Model {
       System {
 	Name			"EKF"
 	Location		[1147, 548, 1645, 848]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -930,7 +944,18 @@ Model {
       BlockType		      Gain
       Name		      "I"
       SID		      "7"
-      Position		      [365, 125, 395, 155]
+      Position		      [375, 125, 405, 155]
+      ShowName		      off
+      Gain		      "I"
+      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      Gain
+      Name		      "I1"
+      SID		      "23"
+      Position		      [680, 160, 710, 190]
       ShowName		      off
       Gain		      "I"
       ParamDataTypeStr	      "Inherit: Inherit via internal rule"
@@ -941,14 +966,24 @@ Model {
       BlockType		      Integrator
       Name		      "Integrator"
       SID		      "5"
+      Tag		      "Integrator"
       Ports		      [1, 1]
-      Position		      [305, 125, 335, 155]
+      Position		      [270, 125, 300, 155]
+    }
+    Block {
+      BlockType		      Integrator
+      Name		      "Itegrtor2"
+      SID		      "24"
+      Tag		      "Integrator"
+      Ports		      [1, 1]
+      Position		      [575, 160, 605, 190]
+      ShowName		      off
     }
     Block {
       BlockType		      Gain
       Name		      "P"
       SID		      "6"
-      Position		      [365, 75, 395, 105]
+      Position		      [375, 75, 405, 105]
       ShowName		      off
       Gain		      "P"
       ParamDataTypeStr	      "Inherit: Inherit via internal rule"
@@ -956,11 +991,28 @@ Model {
       SaturateOnIntegerOverflow	off
     }
     Block {
+      BlockType		      Saturate
+      Name		      "Saturation"
+      SID		      "22"
+      Ports		      [1, 1]
+      Position		      [320, 125, 350, 155]
+      InputPortMap	      "u0"
+    }
+    Block {
+      BlockType		      Saturate
+      Name		      "Saturation1"
+      SID		      "25"
+      Ports		      [1, 1]
+      Position		      [625, 160, 655, 190]
+      ShowName		      off
+      InputPortMap	      "u0"
+    }
+    Block {
       BlockType		      Sum
       Name		      "Sum"
       SID		      "3"
       Ports		      [2, 1]
-      Position		      [230, 130, 250, 150]
+      Position		      [220, 130, 240, 150]
       ShowName		      off
       IconShape		      "round"
       Inputs		      "|+-"
@@ -995,10 +1047,23 @@ Model {
       SaturateOnIntegerOverflow	off
     }
     Block {
+      BlockType		      Sum
+      Name		      "Sum3"
+      SID		      "21"
+      Ports		      [2, 1]
+      Position		      [720, 130, 740, 150]
+      ShowName		      off
+      IconShape		      "round"
+      Inputs		      "+|+"
+      InputSameDT	      off
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
       BlockType		      Outport
       Name		      "Out1"
       SID		      "12"
-      Position		      [655, 133, 685, 147]
+      Position		      [780, 133, 810, 147]
       ShowName		      off
       Port		      "4"
       IconDisplay	      "Port number"
@@ -1006,19 +1071,14 @@ Model {
     Line {
       SrcBlock		      "Sum"
       SrcPort		      1
-      Points		      [15, 0]
+      Points		      [25, 0]
       Branch {
 	DstBlock		"Integrator"
 	DstPort			1
       }
       Branch {
-	Points			[0, -50]
+	Points			[-15, 0; 0, -50]
 	DstBlock		"P"
-	DstPort			1
-      }
-      Branch {
-	Points			[0, 60]
-	DstBlock		"Derivative"
 	DstPort			1
       }
     }
@@ -1029,15 +1089,9 @@ Model {
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Integrator"
-      SrcPort		      1
-      DstBlock		      "I"
-      DstPort		      1
-    }
-    Line {
       SrcBlock		      "P"
       SrcPort		      1
-      Points		      [40, 0]
+      Points		      [30, 0]
       DstBlock		      "Sum1"
       DstPort		      1
     }
@@ -1050,11 +1104,11 @@ Model {
     Line {
       SrcBlock		      "D"
       SrcPort		      1
-      Points		      [40, 0]
       DstBlock		      "Sum1"
       DstPort		      3
     }
     Line {
+      Labels		      [0, 0]
       SrcBlock		      "Sum1"
       SrcPort		      1
       DstBlock		      "Sum2"
@@ -1063,14 +1117,17 @@ Model {
     Line {
       SrcBlock		      "Sum2"
       SrcPort		      1
-      DstBlock		      "1"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "1"
-      SrcPort		      1
-      DstBlock		      "Out1"
-      DstPort		      1
+      Points		      [5, 0]
+      Branch {
+	Points			[0, -30]
+	DstBlock		"1"
+	DstPort			1
+      }
+      Branch {
+	Points			[0, 35]
+	DstBlock		"Itegrtor2"
+	DstPort			1
+      }
     }
     Line {
       SrcBlock		      "Desired Angle"
@@ -1081,43 +1138,99 @@ Model {
     Line {
       SrcBlock		      "EKF"
       SrcPort		      1
-      Points		      [0, -50; -100, 0]
+      Points		      [0, -45; -110, 0]
       DstBlock		      "Sum"
       DstPort		      2
     }
     Line {
       SrcBlock		      "Accelerations"
       SrcPort		      1
-      Points		      [20, 0]
+      Points		      [25, 0]
       DstBlock		      "EKF"
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Gyroscope angular rate"
+      SrcBlock		      "Gyroscope\nangular rate"
       SrcPort		      1
-      Points		      [10, 0]
+      Points		      [15, 0]
       Branch {
-	Points			[325, 0]
-	DstBlock		"Sum2"
-	DstPort			2
-      }
-      Branch {
-	Points			[0, -30]
+	Points			[0, -35]
 	DstBlock		"EKF"
 	DstPort			2
       }
+      Branch {
+	DstBlock		"Derivative"
+	DstPort			1
+      }
+      Branch {
+	Points			[0, 45; 325, 0]
+	DstBlock		"Sum2"
+	DstPort			2
+      }
+    }
+    Line {
+      SrcBlock		      "1"
+      SrcPort		      1
+      Points		      [15, 0]
+      DstBlock		      "Sum3"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Sum3"
+      SrcPort		      1
+      DstBlock		      "Out1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Integrator"
+      SrcPort		      1
+      DstBlock		      "Saturation"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Saturation"
+      SrcPort		      1
+      DstBlock		      "I"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Itegrtor2"
+      SrcPort		      1
+      DstBlock		      "Saturation1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Saturation1"
+      SrcPort		      1
+      DstBlock		      "I1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "I1"
+      SrcPort		      1
+      Points		      [15, 0]
+      DstBlock		      "Sum3"
+      DstPort		      2
     }
     Annotation {
       Name		      "Motor Controllers"
-      Position		      [675, 155]
+      Position		      [800, 155]
     }
     Annotation {
       Name		      "Desired\nangular rate"
-      Position		      [485, 123]
+      Position		      [485, 158]
     }
     Annotation {
       Name		      "Desired Angle"
-      Position		      [198, 123]
+      Position		      [178, 153]
+    }
+    Annotation {
+      Name		      "Integrator"
+      Position		      [587, 196]
+    }
+    Annotation {
+      Name		      "Saturation"
+      Position		      [639, 197]
     }
   }
 }

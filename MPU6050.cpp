@@ -53,7 +53,7 @@ void MPU6050Class::initialise()
     setSampleRateDivider_(0);
     setGyroConfig_(MPU6050_GYRO_FS_500);
     setAccelConfig_(MPU6050_ACCEL_FS_8);
-    setDLPFConfig_(MPU6050_DLPF_BW_42);
+    setDLPFConfig_(MPU6050_DLPF_BW_98);
     enablePassthrough_();
 }
 

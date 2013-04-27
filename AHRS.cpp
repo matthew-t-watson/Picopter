@@ -11,6 +11,9 @@
 #include "unistd.h"
 
 //Values calculated from matlab script MgnCalibration
+const double accelZeroX = 0.2238;
+const double accelZeroY = 0.1543;
+const double accelZeroZ = -0.3633;
 const double accelEllipsoid00_ = 0.1007;
 const double accelEllipsoid01_ = -0.0007;
 const double accelEllipsoid02_ = 0.0002;
@@ -19,6 +22,9 @@ const double accelEllipsoid12_ = 0.0005;
 const double accelEllipsoid22_ = 0.1003;
 
 //Values calculated from matlab script MgnCalibration
+const double magZeroX = 0.0576;
+const double magZeroY = -0.0929;
+const double magZeroZ = -0.0092;
 const double magEllipsoid00_ = 1.8925;
 const double magEllipsoid01_ = 0.0399;
 const double magEllipsoid02_ = 0.0132;
@@ -29,14 +35,6 @@ const double magEllipsoid22_ = 2.1528;
 AHRSClass AHRS;
 
 AHRSClass::AHRSClass() {
-    zeroPoints_.x = 0.2238;
-    zeroPoints_.y = 0.1543;
-    zeroPoints_.z = -0.3633;
-
-    //Values calculated from matlab script MgnCalibration
-    zeroPoints_.magx = 0.0576;
-    zeroPoints_.magy = -0.0929;
-    zeroPoints_.magz = -0.0092;
 }
 
 AHRSClass::AHRSClass(const AHRSClass& orig) {
@@ -49,7 +47,6 @@ void AHRSClass::update() {
     getSensors_();
     calibrateData_();
     temperatureCompensate_();
-    calcAccelAngles_(&calibratedData, &accelAngles);
     fuse_();
 }
 
@@ -79,18 +76,18 @@ void AHRSClass::calibrateData_() {
 
     //Accelerometer scale and bias correction
     static double acceltemp[3];
-    acceltemp[0] = calibratedData.x - zeroPoints_.x;
-    acceltemp[1] = calibratedData.y - zeroPoints_.y;
-    acceltemp[2] = calibratedData.z - zeroPoints_.z;
+    acceltemp[0] = calibratedData.x - accelZeroX;
+    acceltemp[1] = calibratedData.y - accelZeroY;
+    acceltemp[2] = calibratedData.z - accelZeroZ;
     calibratedData.x = accelEllipsoid00_ * acceltemp[0] + accelEllipsoid01_ * acceltemp[1] + accelEllipsoid02_ * acceltemp[2];
     calibratedData.y = accelEllipsoid11_ * acceltemp[1] + accelEllipsoid12_ * acceltemp[2];
     calibratedData.z = accelEllipsoid22_ * acceltemp[2];
 
     //Magnetometer scale and bias correction
     static double magtemp[3];
-    magtemp[0] = calibratedData.magx - zeroPoints_.magx;
-    magtemp[1] = calibratedData.magy - zeroPoints_.magy;
-    magtemp[2] = calibratedData.magz - zeroPoints_.magz;
+    magtemp[0] = calibratedData.magx - magZeroX;
+    magtemp[1] = calibratedData.magy - magZeroY;
+    magtemp[2] = calibratedData.magz - magZeroZ;
     calibratedData.magx = magEllipsoid00_ * magtemp[0] + magEllipsoid01_ * magtemp[1] + magEllipsoid02_ * magtemp[2];
     calibratedData.magy = magEllipsoid11_ * magtemp[1] + magEllipsoid12_ * magtemp[2];
     calibratedData.magz = magEllipsoid22_ * magtemp[2];
@@ -109,6 +106,7 @@ void AHRSClass::calibrateData_() {
     if(i == LENGTH) {
 	i = 0;
     }
+    //End Altitude LPF
 }
 
 inline void AHRSClass::temperatureCompensate_() {
@@ -125,10 +123,6 @@ inline void AHRSClass::temperatureCompensate_() {
     //calibratedData.z -= 1.6966e-5 * tempPow2 - 0.0035421 * tempPow1;  + 0.056; //Z axis accel shows huge temperature drift (15% over 40 degrees)
 }
 
-void AHRSClass::calcAccelAngles_(s_calibratedData* data, s_euler* angles) {
-    angles->pitch = (180 / pi) * atan(data->y / sqrt(pow(data->x, 2) + pow(data->z, 2)));
-    angles->roll = (180 / pi) * atan(data->x / sqrt(pow(data->y, 2) + pow(data->z, 2)));
-}
 
 void AHRSClass::fuse_() {
     if(Timer.dt < 0.03) {
@@ -136,12 +130,12 @@ void AHRSClass::fuse_() {
     }
     quaternion = EKF.update(&calibratedData, Timer.dt);
 
-    quaternionToYPR(&quaternion, &orientation);
+    quaternionToYPR_(&quaternion, &orientation);
 
 
 }
 
-void AHRSClass::quaternionToYPR(QuaternionClass* q, s_euler* orientation) {
+void AHRSClass::quaternionToYPR_(QuaternionClass* q, s_euler* orientation) {
     orientation->pitch = -(180/pi) * atan2(2*(q->w*q->x + q->y*q->z), 1 - 2*(pow(q->x,2)+pow(q->y,2)));
     orientation->roll  = (180/pi) * asin(2*(q->w*q->y - q->z*q->x));
     orientation->yaw   = (180/pi) * atan2(2*(q->w*q->z + q->x*q->y), 1 - 2*(pow(q->y,2)+pow(q->z,2)));

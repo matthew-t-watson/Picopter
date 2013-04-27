@@ -60,8 +60,6 @@ void LoggerClass::update() {
 		<< AHRS.calibratedData.magz << ", "
 		<< AHRS.calibratedData.pressure << ", "
 		<< AHRS.calibratedData.altitude << ", "
-		<< AHRS.accelAngles.pitch << ", "
-		<< AHRS.accelAngles.roll << ", "
 		<< AHRS.orientation.pitch << ", "
 		<< AHRS.orientation.roll << ", "
 		<< AHRS.orientation.yaw << ", "
@@ -86,7 +84,7 @@ void LoggerClass::update() {
 		<< AHRS.quaternion.x << ", "
 		<< AHRS.quaternion.y << ", "
 		<< AHRS.quaternion.z
-		//		//Add additional logs below
+		//Add additional logs below
 		<< std::endl;
 	if(PICInterface.rx.sw1 == false) {
 	    doWeNeedToFlush();

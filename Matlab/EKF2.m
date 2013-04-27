@@ -4,24 +4,25 @@ function [ q, wb, pitch, roll, yaw, error ] = EKF2( a,w,m,dt )
 persistent x P;
 
 % Tuning paramaters
-Q = [0, 0, 0, 0, 0, 0, 0;
-    0, 0, 0, 0, 0, 0, 0;
-    0, 0, 0, 0, 0, 0, 0;
-    0, 0, 0, 0, 0, 0, 0;
-    0, 0, 0, 0, 0.01, 0, 0;
-    0, 0, 0, 0, 0, 0.01, 0;
-    0, 0, 0, 0, 0, 0, 0.01];
+Q = [1e-8, 0, 0, 0, 0, 0, 0;
+    0, 1e-8, 0, 0, 0, 0, 0;
+    0, 0, 1e-8, 0, 0, 0, 0;
+    0, 0, 0, 1e-8, 0, 0, 0;
+    0, 0, 0, 0, 5e-9, 0, 0;
+    0, 0, 0, 0, 0, 5e-9, 0;
+    0, 0, 0, 0, 0, 0, 5e-9];
 
-R = [1000000,    0,    0,0,0,0;
-        0, 1000000,    0,0,0,0;
-        0,    0, 1000000,0,0,0;
-        0,0,0,10000000000,0,0;
-        0,0,0,0,10000000000,0;
-        0,0,0,0,0,10000000000;];
+R = [0.01,0,0,0,0,0;
+     0,.01,0,0,0,0;
+     0,0,0.01,0,0,0;
+     0,0,0,100,0,0;
+     0,0,0,0,100,0;
+     0,0,0,0,0,100;];
         
 
 if isempty(P)    
-    P = eye(length(Q))*1000000; %Large uncertainty of initial values
+    P = eye(length(Q)); %Large uncertainty of initial values
+    P = P*10000;
     x = [1, 0, 0, 0, 0, 0, 0]';
 end
 
@@ -49,9 +50,9 @@ z=z';
 %Predicted state estimate
 % x = f(x,u)
 x = [q0 + (dt/2) * (-q1*(wx-wxb) - q2*(wy-wyb) - q3*(wz-wzb));
-     q1 + (dt/2) * ( q0*(wx-wxb) + q3*(wy-wyb) - q2*(wz-wzb));
-     q2 + (dt/2) * (-q3*(wx-wxb) + q0*(wy-wyb) + q1*(wz-wzb));
-     q3 + (dt/2) * ( q2*(wx-wxb) - q1*(wy-wyb) + q0*(wz-wzb));
+     q1 + (dt/2) * ( q0*(wx-wxb) - q3*(wy-wyb) + q2*(wz-wzb));
+     q2 + (dt/2) * ( q3*(wx-wxb) + q0*(wy-wyb) - q1*(wz-wzb));
+     q3 + (dt/2) * (-q2*(wx-wxb) + q1*(wy-wyb) + q0*(wz-wzb));
      wxb;
      wyb;
      wzb;];
@@ -70,9 +71,9 @@ q3 = x(4);
 
 % Populate F jacobian
 F = [              1, -(dt/2)*(wx-wxb), -(dt/2)*(wy-wyb), -(dt/2)*(wz-wzb),  (dt/2)*q1,  (dt/2)*q2,  (dt/2)*q3;
-     (dt/2)*(wx-wxb),                1, -(dt/2)*(wz-wzb),  (dt/2)*(wy-wyb), -(dt/2)*q0, -(dt/2)*q3,  (dt/2)*q2;
-     (dt/2)*(wy-wyb),  (dt/2)*(wz-wzb),                1, -(dt/2)*(wx-wxb),  (dt/2)*q3, -(dt/2)*q0, -(dt/2)*q1;
-     (dt/2)*(wz-wzb), -(dt/2)*(wy-wyb),  (dt/2)*(wx-wxb),                1, -(dt/2)*q2,  (dt/2)*q1, -(dt/2)*q0;
+     (dt/2)*(wx-wxb),                1,  (dt/2)*(wz-wzb), -(dt/2)*(wy-wyb), -(dt/2)*q0,  (dt/2)*q3, -(dt/2)*q2;
+     (dt/2)*(wy-wyb), -(dt/2)*(wz-wzb),                1,  (dt/2)*(wx-wxb), -(dt/2)*q3, -(dt/2)*q0,  (dt/2)*q1;
+     (dt/2)*(wz-wzb),  (dt/2)*(wy-wyb), -(dt/2)*(wx-wxb),                1,  (dt/2)*q2, -(dt/2)*q1, -(dt/2)*q0;
                    0,                0,                0,                0,          1,          0,          0;
                    0,                0,                0,                0,          0,          1,          0;
                    0,                0,                0,                0,          0,          0,          1;];
@@ -147,13 +148,8 @@ q3 = x(4);
 I = eye(length(P));
 P = (I - K*H)*P;  % Output state covariance
 
-%Create triad representing attitude with respect to gravity
-attitude= [2*q0*q2 - 2*q1*q3;
-    - 2*q0*q1 - 2*q2*q3;
-    - q0^2 + q1^2 + q2^2 - q3^2;];
-
-pitch = (180 / pi) * atan2(attitude(2) , sqrt(attitude(1)^2 + attitude(3)^2));
-roll = (180 / pi) * atan2(attitude(1) , sqrt(attitude(2)^2 + attitude(3)^2));
+pitch = (180/pi) * atan2(2*(q0*q1+q2*q3),1-2*(q1^2+q2^2));
+roll = (180/pi) * asin(2*(q0*q2-q3*q1));
 yaw = (180/pi) * atan2(2*(q0*q3+q1*q2),1-2*(q2^2+q3^2));
 
 
