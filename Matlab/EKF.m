@@ -1,4 +1,4 @@
-function [ q, wb, pitch, roll, yaw, error ] = EKF( a,w,m,dt )
+function [ q, wb, pitch, roll, yaw, error, b ] = EKF( a,w,m,dt )
 
 
 persistent x P;
@@ -15,19 +15,13 @@ Q = [0, 0, 0, 0, 0, 0, 0;
 R = [500000,0,0,0,0,0;
      0,500000,0,0,0,0;
      0,0,500000,0,0,0;
-     0,0,0,100000000,0,0;
-     0,0,0,0,100000000,0;
-     0,0,0,0,0,100000000;];
+     0,0,0,10000000,0,0;
+     0,0,0,0,10000000,0;
+     0,0,0,0,0,10000000;];
         
 
 if isempty(P)
-    P(1,1) = 10000000;
-    P(2,2) = 10000000;
-    P(3,3) = 10000000;
-    P(4,4) = 10000000;
-    P(5,5) = 1000;
-    P(6,6) = 1000;
-    P(7,7) = 1000;
+    P = eye(7,7)*100000000; % No idea what the initial state is
     x = [1, 0, 0, 0, 0, 0, 0]';
 end
 
@@ -68,7 +62,7 @@ q1 = x(2);
 q2 = x(3);
 q3 = x(4);
 
-% Populate F jacobian
+% Populate F Jacobian
 F = [              1, -(dt/2)*(wx-wxb), -(dt/2)*(wy-wyb), -(dt/2)*(wz-wzb),  (dt/2)*q1,  (dt/2)*q2,  (dt/2)*q3;
      (dt/2)*(wx-wxb),                1,  (dt/2)*(wz-wzb), -(dt/2)*(wy-wyb), -(dt/2)*q0,  (dt/2)*q3, -(dt/2)*q2;
      (dt/2)*(wy-wyb), -(dt/2)*(wz-wzb),                1,  (dt/2)*(wx-wxb), -(dt/2)*q3, -(dt/2)*q0,  (dt/2)*q1;
@@ -93,28 +87,24 @@ z(4) = z(4)/mag_norm;
 z(5) = z(5)/mag_norm;
 z(6) = z(6)/mag_norm;
 
-%Build quaternion rotation matrix
-R = [q0^2+q1^2-q2^2-q3^2,     2*(q1*q2-q0*q3),     2*(q1*q3+q0*q2);
-         2*(q1*q2+q0*q3), q0^2-q1^2+q2^2-q3^2,     2*(q2*q3-q0*q1);
-         2*(q1*q3-q0*q2),     2*(q2*q3+q0*q1), q0^2-q1^2-q2^2+q3^2];
-
-%Rotate magnetic vector into reference frame
-Rm = R*[z(4); z(5); z(6)];
-
-
+% Reference field calculation
+% Build quaternion rotation matrix
+Rq = [q0^2+q1^2-q2^2-q3^2,     2*(q1*q2-q0*q3),      2*(q1*q3+q0*q2);
+          2*(q1*q2+q0*q3), q0^2-q1^2+q2^2-q3^2,      2*(q2*q3-q0*q1);
+          2*(q1*q3-q0*q2),     2*(q2*q3+q0*q1), q0^2-q1^2-q2^2+q3^2];
+% Rotate magnetic vector into reference frame
+Rm = Rq * [z(4); z(5); z(6)];
 bx = sqrt(Rm(1)^2 + Rm(2)^2);
-by = 0;
 bz = Rm(3);
 
-
 h = [-2*(q1*q3 - q0*q2);
-     -2*(q2*q3 - q0*q1);
-     -q0^2 + q1^2 + q2^2 - q3^2;
+     -2*(q2*q3 + q0*q1);
+     - q0^2 + q1^2 + q2^2 - q3^2;
      bx*(q0^2 + q1^2 - q2^2 - q3^2) + 2*bz*(q1*q3 - q0*q2);
-     2*bx*(q1*q2 - q0*q3) - 2*bz*(q2*q3 + q0*q1);
+     2*bx*(q1*q2 - q0*q3) + 2*bz*(q2*q3 + q0*q1);
      2*bx*(q1*q3 + q0*q2) + bz*(q0^2 - q1^2 - q2^2 + q3^2);];
- 
-%Measurement residual
+
+% Measurement residual
 % y = z - h(x), where h(x) is the matrix that maps the state onto the measurement
 y = z - h;
 
@@ -123,9 +113,9 @@ y = z - h;
 H = [ 2*q2, -2*q3,  2*q0, -2*q1, 0, 0, 0;
      -2*q1, -2*q0, -2*q3, -2*q2, 0, 0, 0;
      -2*q0,  2*q1,  2*q2, -2*q3, 0, 0, 0;
-     2*( q0*bx - q2*bz), 2*( q1*bx + q3*bz), 2*(-q2*bx - q0*bz), 2*(-q3*bx + q1*bz), 0, 0, 0;
-     2*(-q3*bx - q1*bz), 2*( q2*bx - q0*bz), 2*( q1*bx - q3*bz), 2*(-q0*bx - q2*bz), 0, 0, 0;
-     2*( q2*bx - q0*bz), 2*( q3*bx - q1*bz), 2*( q0*bx - q2*bz), 2*( q1*bx + q3*bz), 0, 0, 0]; 
+      2*( q0*bx - q2*bz), 2*( q1*bx + q3*bz), 2*(-q2*bx - q0*bz), 2*(-q3*bx + q1*bz), 0, 0, 0;
+      2*(-q3*bx + q1*bz), 2*( q2*bx + q0*bz), 2*( q1*bx + q3*bz), 2*(-q0*bx + q2*bz), 0, 0, 0;
+      2*( q2*bx + q0*bz), 2*( q3*bx - q1*bz), 2*( q0*bx - q2*bz), 2*( q1*bx + q3*bz), 0, 0, 0]; 
 
 % Residual covariance
 S = H*P*H' + R;
@@ -161,6 +151,7 @@ yaw = (180/pi) * atan2(2*(q0*q3+q1*q2),1-2*(q2^2+q3^2));
 q = [x(1), x(2), x(3), x(4)];
 wb = [x(5), x(6), x(7)];
 error = y;
+b = [bx, 0, bz];
 
 end
 
